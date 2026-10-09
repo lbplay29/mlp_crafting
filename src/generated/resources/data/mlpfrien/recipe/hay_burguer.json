@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:bread"
+    },
+    "D": {
+      "item": "minecraft:wheat"
+    },
+    "L": {
+      "tag": "minecraft:leaves"
+    }
+  },
+  "pattern": [
+    " A ",
+    "LDL",
+    " A "
+  ],
+  "result": {
+    "count": 1,
+    "id": "mlpfrien:hay_burguer"
+  }
+}

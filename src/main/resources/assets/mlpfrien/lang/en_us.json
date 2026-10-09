@@ -1,0 +1,19 @@
+{
+  "itemGroup.mlpfrien": "Example Mod Tab",
+  "block.mlpfrien.example_block": "Example Block",
+  "item.mlpfrien.hay_burguer": "Hay Burguer",
+  "item.mlpfrien.caramel_apple": "Caramel Apple",
+  "item.mlpfrien.sour_apple": "Sweet Apple",
+  "item.mlpfrien.green_apple": "Green Apple",
+
+  "mlpfrien.configuration.title": "My Little Pony: Crafting Friends Configs",
+  "mlpfrien.configuration.section.mlpfrien.common.toml": "My Little Pony: Crafting Friends Configs",
+  "mlpfrien.configuration.section.mlpfrien.common.toml.title": "My Little Pony: Crafting Friends Configs",
+  "mlpfrien.configuration.items": "Item List",
+  "mlpfrien.configuration.logDirtBlock": "Log Dirt Block",
+  "mlpfrien.configuration.magicNumberIntroduction": "Magic Number Text",
+  "mlpfrien.configuration.magicNumber": "Magic Number",
+  "key.mlpfrien.menu": "Charater Info Screen",
+  "key.categories.mlpfrien": "My Little Pony: Crafting Friends",
+  "key.mlpfrien.skill": "Cast Spell"
+}
