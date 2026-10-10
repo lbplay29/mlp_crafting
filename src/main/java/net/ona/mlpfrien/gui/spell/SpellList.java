@@ -4,37 +4,38 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
+import net.ona.mlpfrien.gui.PonyCreatorGUI;
 import net.ona.mlpfrien.gui.SpellManagerGUI;
 import net.ona.mlpfrien.magic.UnicornSpell;
+import net.ona.mlpfrien.util.TextImageButton;
 
 import java.util.List;
 
-public class SpellList
-        extends ContainerObjectSelectionList<SpellList.SpellEntry> {
+public class SpellList extends ContainerObjectSelectionList<SpellList.SpellEntry> {
 
     private final SpellManagerGUI screen;
+    private static final WidgetSprites LETTER_SPRITES = new WidgetSprites(id("textbox_letter_gui"),id("textbox_letter_gui02"),id("textbox_letter_gui03"),
+            id("textbox_letter_gui02"));
+    private static final WidgetSprites OPTION_SPRITES = new WidgetSprites(id("textbox_gui"),id("textbox_gui02"),id("textbox_gui"),
+            id("textbox_gui02"));
+    private static final WidgetSprites CONFIRM_SPRITES = new WidgetSprites(id("textbox_confirm_gui"),id("textbox_confirm_gui02"),id("textbox_confirm_gui"),
+            id("textbox_confirm_gui02"));
 
-    public SpellList(
-            Minecraft minecraft,
-            SpellManagerGUI screen,
-            int x,
-            int y,
-            int width,
-            int height
-    ) {
-        super(
-                minecraft,
-                width,
-                height,
-                y,
-                24
-        );
+    private static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID, path);
+    }
+
+
+    public SpellList(Minecraft minecraft, SpellManagerGUI screen, int x, int y, int width, int height) {
+        super(minecraft, width, height, y, 33);
 
         this.screen = screen;
-
         setX(x);
     }
 
@@ -42,77 +43,29 @@ public class SpellList
         clearEntries();
 
         for (int i = 0; i < spells.size(); i++) {
-            addEntry(
-                    new SpellEntry(
-                            screen,
-                            spells.get(i),
-                            i
-                    )
-            );
+            addEntry(new SpellEntry(screen, spells.get(i), i));
         }
     }
 
-    public static class SpellEntry
-            extends ContainerObjectSelectionList.Entry<SpellEntry> {
+    public static class SpellEntry extends ContainerObjectSelectionList.Entry<SpellEntry> {
+        private final TextImageButton spellButton;
+        private final TextImageButton replaceButton;
+        private final TextImageButton removeButton;
 
-        private final Button spellButton;
-        private final Button replaceButton;
-        private final Button removeButton;
+        public SpellEntry(SpellManagerGUI screen, UnicornSpell spell, int spellIndex) {
+            spellButton = new TextImageButton(0,0,86,29,OPTION_SPRITES,button -> screen.assignSpell(spellIndex),Component.literal(spell.name()),
+                    screen.getMinecraft().font);
 
-        public SpellEntry(
-                SpellManagerGUI screen,
-                UnicornSpell spell,
-                int spellIndex
-        ) {
+            replaceButton = new TextImageButton(0,0,56,29,CONFIRM_SPRITES,button -> screen.replaceSpell(spellIndex),Component.literal("Replace"),
+                    screen.getMinecraft().font);
 
-            spellButton = Button.builder(
-                    Component.literal(spell.name()),
-                    button -> screen.assignSpell(spellIndex)
-            ).bounds(
-                    0,
-                    0,
-                    120,
-                    20
-            ).build();
-
-
-            replaceButton = Button.builder(
-                    Component.literal("Replace"),
-                    button -> screen.replaceSpell(spellIndex)
-            ).bounds(
-                    0,
-                    0,
-                    55,
-                    20
-            ).build();
-
-
-            removeButton = Button.builder(
-                    Component.literal("X"),
-                    button -> screen.removeSpell(spellIndex)
-            ).bounds(
-                    0,
-                    0,
-                    20,
-                    20
-            ).build();
+            removeButton = new TextImageButton(0,0,29,29,LETTER_SPRITES,button -> screen.removeSpell(spellIndex),Component.literal("X"),
+                    screen.getMinecraft().font);
         }
 
 
         @Override
-        public void render(
-                GuiGraphics guiGraphics,
-                int index,
-                int top,
-                int left,
-                int width,
-                int height,
-                int mouseX,
-                int mouseY,
-                boolean hovering,
-                float partialTick
-        ) {
-
+        public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hovering, float partialTick) {
             spellButton.setX(left);
             spellButton.setY(top);
 
@@ -123,46 +76,21 @@ public class SpellList
             removeButton.setY(top);
 
 
-            spellButton.render(
-                    guiGraphics,
-                    mouseX,
-                    mouseY,
-                    partialTick
-            );
-
-            replaceButton.render(
-                    guiGraphics,
-                    mouseX,
-                    mouseY,
-                    partialTick
-            );
-
-            removeButton.render(
-                    guiGraphics,
-                    mouseX,
-                    mouseY,
-                    partialTick
-            );
+            spellButton.render(guiGraphics, mouseX, mouseY, partialTick);
+            replaceButton.render(guiGraphics, mouseX, mouseY, partialTick);
+            removeButton.render(guiGraphics, mouseX, mouseY, partialTick);
         }
 
 
         @Override
         public List<? extends GuiEventListener> children() {
-            return List.of(
-                    spellButton,
-                    replaceButton,
-                    removeButton
-            );
+            return List.of(spellButton, replaceButton, removeButton);
         }
 
 
         @Override
         public List<? extends NarratableEntry> narratables() {
-            return List.of(
-                    spellButton,
-                    replaceButton,
-                    removeButton
-            );
+            return List.of(spellButton, replaceButton, removeButton);
         }
     }
 }

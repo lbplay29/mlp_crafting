@@ -17,6 +17,7 @@ import net.ona.mlpfrien.network.CreateSpellPayload;
 import net.ona.mlpfrien.network.EquipSpellPayload;
 import net.ona.mlpfrien.network.RemoveSpellPayload;
 import net.ona.mlpfrien.network.ReplaceSpellPayload;
+import net.ona.mlpfrien.util.TextImageButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,16 @@ public class SpellManagerGUI extends Screen {
     private EditBox spellNameBox;
     private SpellList spellList;
     private UnicornData lastData;
+    private static final WidgetSprites LETTER_SPRITES = new WidgetSprites(id("textbox_letter_gui"),id("textbox_letter_gui02"),id("textbox_letter_gui03"),
+            id("textbox_letter_gui02"));
+    private static final WidgetSprites OPTION_SPRITES = new WidgetSprites(id("textbox_gui"),id("textbox_gui02"),id("textbox_gui"),
+            id("textbox_gui02"));
+    private static final WidgetSprites CONFIRM_SPRITES = new WidgetSprites(id("textbox_confirm_gui"),id("textbox_confirm_gui02"),id("textbox_confirm_gui"),
+            id("textbox_confirm_gui02"));
+
+    private static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID, path);
+    }
 
 
     private WidgetSprites getComponent(SpellComponent component) {
@@ -85,27 +96,12 @@ public class SpellManagerGUI extends Screen {
 
             int slot = i;
 
-            addRenderableWidget(Button.builder(Component.literal(String.valueOf(i + 1)), button -> {
-                selectedSlot = slot;
-                MyLittlePonyCraftingFriends.LOGGER.info("SELECTED SLOT: " + selectedSlot);}).bounds(
-                                    this.width/2-50 + (i * 24),
-                                    this.height/2+80,
-                                    20,
-                                    20
-                            ).build()
-            );
+            addRenderableWidget(new TextImageButton(this.width/2-50 + (i * 33), this.height/2+80, 29, 29,LETTER_SPRITES,button -> {
+                selectedSlot = slot;},Component.literal(String.valueOf(i+1)),this.font));
         }
 
-        addRenderableWidget(Button.builder(
-                                Component.literal("Create"),
-                                button -> {
-                                    createSpell();
-                                }
-                        ).bounds(
-                                this.width/2-50,
-                                this.height/2-100,
-                                60,
-                                20).build());
+        addRenderableWidget(new TextImageButton(this.width/2-50, this.height/2-100, 56, 29,CONFIRM_SPRITES,
+                button -> createSpell(),Component.literal("Create"),this.font));
     }
 
     public void assignSpell(int spellIndex) {

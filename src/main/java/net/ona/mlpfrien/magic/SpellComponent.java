@@ -22,7 +22,7 @@ public enum SpellComponent {
         @Override
         public void apply(SpellContext context) {
             if (context.getTarget() instanceof LivingEntity target) {
-                target.hurt(context.getCaster().damageSources().magic(), 4.0F*context.getPower());
+                target.hurt(context.getCaster().damageSources().magic(), 4.0F*(2*context.getPower()));
             } else {
                 BlockState block = context.getCaster().level().getBlockState(BlockPos.containing(context.getBlockTarget()));
                 if (block.is(BlockTags.SCULK_REPLACEABLE)) {
@@ -37,7 +37,7 @@ public enum SpellComponent {
         public void apply(SpellContext context) {
             if (context.getTarget() != null) {
                 context.getCaster().teleportTo(context.getTarget().position().x,context.getTarget().position().y,context.getTarget().position().z);
-            } else {
+            } else if (context.getBlockTarget()!=Vec3.ZERO) {
                 Vec3 pos = Vec3.atLowerCornerOf(BlockPos.containing(context.getBlockTarget()).above());
                 context.getCaster().teleportTo(pos.x,pos.y,pos.z);
             }
@@ -64,7 +64,7 @@ public enum SpellComponent {
             if (context.getTarget() != null) {
                 context.getTarget().igniteForSeconds(5*context.getPower());
             } else {
-                context.getCaster().level().setBlockAndUpdate(BlockPos.containing(context.getBlockTarget()).above(), Blocks.FIRE.defaultBlockState());
+                context.getCaster().level().setBlockAndUpdate(BlockPos.containing(context.getBlockTarget()), Blocks.FIRE.defaultBlockState());
             }
         }
     },
@@ -93,7 +93,9 @@ public enum SpellComponent {
 
                 Vec3 pos = blockHit.getLocation();
                 context.setBlockTarget(pos);
-            } else if (hit.getType() == HitResult.Type.ENTITY) {
+            }
+            if (hit.getType() == HitResult.Type.ENTITY) {
+                assert hit instanceof EntityHitResult;
                 EntityHitResult result = (EntityHitResult) hit;
 
                 context.setTarget(result.getEntity());
@@ -126,7 +128,7 @@ public enum SpellComponent {
         @Override
         public void apply(SpellContext context) {
             if (context.getTarget() instanceof LivingEntity target) {
-                target.heal(4.0F);
+                target.heal(4.0F*context.getPower());
             }
         }
     };
