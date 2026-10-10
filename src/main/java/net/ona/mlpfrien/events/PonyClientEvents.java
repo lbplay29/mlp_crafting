@@ -3,31 +3,14 @@ package net.ona.mlpfrien.events;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.NoopRenderer;
-import net.minecraft.commands.arguments.blocks.BlockStateParser;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.event.entity.living.LivingDestroyBlockEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.event.level.LevelEvent;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.data.PonyAttachments;
@@ -35,13 +18,9 @@ import net.ona.mlpfrien.data.PonyData;
 import net.ona.mlpfrien.init.PonyEntities;
 import net.ona.mlpfrien.magic.ManaHud;
 import net.ona.mlpfrien.network.PegasusFlightPayload;
-import net.ona.mlpfrien.network.PonyDataPayload;
 import net.ona.mlpfrien.network.SpellCastPayload;
-import net.ona.mlpfrien.ponyvisuals.gui.PonyCreatorGUI;
-import net.ona.mlpfrien.ponyvisuals.gui.PonyInfoGUI;
-import net.ona.mlpfrien.ponyvisuals.gui.SpellManagerGUI;
-import net.ona.mlpfrien.ponyvisuals.render.CutieMarkManager;
-import net.ona.mlpfrien.ponyvisuals.render.PonyTextureManager;
+import net.ona.mlpfrien.gui.PonyCreatorGUI;
+import net.ona.mlpfrien.gui.PonyInfoGUI;
 import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = MyLittlePonyCraftingFriends.MODID, value = Dist.CLIENT)
@@ -49,7 +28,7 @@ public class PonyClientEvents {
     public static final KeyMapping CREATOR_MENU = new KeyMapping(
             "key.mlpfrien.menu",
             InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_G,
+            GLFW.GLFW_KEY_O,
             "key.categories.mlpfrien"
     );
     public static final KeyMapping ABILITY = new KeyMapping(
@@ -57,7 +36,13 @@ public class PonyClientEvents {
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_R,
             "key.categories.mlpfrien"
+    );public static final KeyMapping ABILITY_TWO = new KeyMapping(
+            "key.mlpfrien.skill_two",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_G,
+            "key.categories.mlpfrien"
     );
+
 
     public static boolean wasJumping;
     public static boolean flightArmed;
@@ -74,6 +59,7 @@ public class PonyClientEvents {
     public static void register(RegisterKeyMappingsEvent event) {
         event.register(ABILITY);
         event.register(CREATOR_MENU);
+        event.register(ABILITY_TWO);
     }
 
     @SubscribeEvent
@@ -88,7 +74,9 @@ public class PonyClientEvents {
             }
         }
         if (ABILITY.consumeClick()) {
-            PacketDistributor.sendToServer(new SpellCastPayload(player.getData(PonyAttachments.UNICORN_DATA)));
+            PacketDistributor.sendToServer(new SpellCastPayload(0));
+        } else if (ABILITY_TWO.consumeClick()) {
+            PacketDistributor.sendToServer(new SpellCastPayload(1));
         }
         if (player.getData(PonyAttachments.PONY_DATA).race() == PonyData.RACES.PEGASUS) {
             boolean jumpDown =Minecraft.getInstance().options.keyJump.isDown();

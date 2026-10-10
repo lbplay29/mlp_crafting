@@ -1,4 +1,4 @@
-package net.ona.mlpfrien.ponyvisuals.gui;
+package net.ona.mlpfrien.gui;
 
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.Component;

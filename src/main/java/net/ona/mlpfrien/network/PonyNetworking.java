@@ -25,5 +25,29 @@ public class PonyNetworking {
                 SpellCastPayload.STREAM_CODEC,
                 ServerPayloadHandler::handleSpellCasting
         );
+
+        registrar.playToServer(
+                CreateSpellPayload.TYPE,
+                CreateSpellPayload.STREAM_CODEC,
+                ServerPayloadHandler::handleCreateSpell
+        );
+
+        registrar.playToServer(
+                ReplaceSpellPayload.TYPE,
+                ReplaceSpellPayload.STREAM_CODEC,
+                ServerPayloadHandler::handleReplaceSpell
+        );
+
+        registrar.playToServer(
+                RemoveSpellPayload.TYPE,
+                RemoveSpellPayload.STREAM_CODEC,
+                ServerPayloadHandler::handleRemoveSpell
+        );
+
+        registrar.playToServer(
+                EquipSpellPayload.TYPE,
+                EquipSpellPayload.STREAM_CODEC,
+                ServerPayloadHandler::handleEquipSpell
+        );
     }
 }

@@ -50,6 +50,7 @@ public class PonyEvents {
                                     ServerPlayer player = context.getSource().getPlayerOrException();
 
                                     player.setData(PonyAttachments.PONY_DATA, PonyData.defaultData());
+                                    player.setData(PonyAttachments.UNICORN_DATA, UnicornData.defaultData());
 
                                     return 1;})
                                 )

@@ -15,5 +15,6 @@
   "mlpfrien.configuration.magicNumber": "Magic Number",
   "key.mlpfrien.menu": "Charater Info Screen",
   "key.categories.mlpfrien": "My Little Pony: Crafting Friends",
-  "key.mlpfrien.skill": "Cast Spell"
+  "key.mlpfrien.skill": "Cast Spell",
+  "key.mlpfrien.skill_two": "Second Spell"
 }

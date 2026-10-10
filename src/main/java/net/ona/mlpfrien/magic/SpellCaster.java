@@ -59,6 +59,6 @@ public class SpellCaster {
     public static void useMana(Player player, float subtraction) {
         UnicornData data = player.getData(PonyAttachments.UNICORN_DATA);
         player.setData(PonyAttachments.UNICORN_DATA, new UnicornData(data.spells(),data.equippedSpells(),
-                data.currentSlot(), data.spellSlots(), data.mana()-(subtraction), data.max_mana(), data.level()));
+                 data.spellSlots(), data.mana()-(subtraction), data.max_mana(), data.level()));
     }
 }

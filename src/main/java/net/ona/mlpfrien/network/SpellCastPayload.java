@@ -8,10 +8,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.magic.UnicornData;
 
-public record SpellCastPayload(UnicornData data) implements CustomPacketPayload {
+public record SpellCastPayload(int slot) implements CustomPacketPayload {
 
     public static final Type<SpellCastPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID, "spell_casting_load"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, SpellCastPayload> STREAM_CODEC = UnicornData.STREAM_CODEC.map(SpellCastPayload::new,SpellCastPayload::data);
+    public static final StreamCodec<RegistryFriendlyByteBuf, SpellCastPayload> STREAM_CODEC = StreamCodec.of((buf, payload) ->
+            {buf.writeVarInt(payload.slot());}, buf -> {int slot = buf.readVarInt();return new SpellCastPayload(slot);});
 
     @Override
     public Type<? extends CustomPacketPayload> type() {return TYPE;}

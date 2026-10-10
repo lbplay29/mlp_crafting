@@ -1,4 +1,4 @@
-package net.ona.mlpfrien.ponyvisuals.gui;
+package net.ona.mlpfrien.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -7,15 +7,10 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.entity.player.Player;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.data.PonyAttachments;
 import net.ona.mlpfrien.data.PonyData;
-import net.ona.mlpfrien.ponyvisuals.render.CutieMarkManager;
 import net.ona.mlpfrien.util.TextImageButton;
-
-import java.util.Locale;
 
 public class PonyInfoGUI extends Screen {
     public PonyInfoGUI() {

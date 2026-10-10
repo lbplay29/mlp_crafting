@@ -1,19 +1,14 @@
 package net.ona.mlpfrien;
 
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.ona.mlpfrien.data.PonyAttachments;
-import net.ona.mlpfrien.datagen.DataGenerators;
 import net.ona.mlpfrien.init.PonyEntities;
 import net.ona.mlpfrien.init.PonyItems;
 import net.ona.mlpfrien.network.PonyNetworking;
-import net.ona.mlpfrien.ponyvisuals.gui.PonyCreatorGUI;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -23,8 +18,6 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-
-import java.util.function.Consumer;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(MyLittlePonyCraftingFriends.MODID)
