@@ -1,0 +1,29 @@
+{
+  "parent": "minecraft:story/smelt_iron",
+  "criteria": {
+    "cutie_mark_thing": {
+      "trigger": "mlpfrien:cutie_mark"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.story.cutie_mark.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "mlpfrien:sour_apple"
+    },
+    "title": {
+      "translate": "advancements.story.cutie_mark.title"
+    }
+  },
+  "requirements": [
+    [
+      "cutie_mark_thing"
+    ]
+  ],
+  "rewards": {
+    "experience": 100
+  },
+  "sends_telemetry_event": true
+}
