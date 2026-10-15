@@ -52,14 +52,14 @@ public class PonyItemInHand<T extends AbstractClientPlayer, M extends PonyModel<
             } else {
                 getParentModel().root.translateAndRotate(poseStack);
                 getParentModel().rightArm.translateAndRotate(poseStack);
-                //getParentModel().head.translateAndRotate(poseStack);
-                //getParentModel().heldItem.translateAndRotate(poseStack);
-                //poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
-                //poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
-                //poseStack.translate(-0.1,-0.1,0.5);
+//                getParentModel().head.translateAndRotate(poseStack);
+                getParentModel().heldItem.translateAndRotate(poseStack);
+                poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
                 poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
-                poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-                poseStack.translate(-0.2,0.1,0.8);
+                poseStack.translate(-0.1,-0.1,0.5);
+//                poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
+//                poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+//                poseStack.translate(-0.2,0.1,0.8);
             }
             boolean flag = arm == HumanoidArm.LEFT;
             poseStack.translate((float)(flag ? -1 : 1) / 4.0F, 0.125F, -0.625F);

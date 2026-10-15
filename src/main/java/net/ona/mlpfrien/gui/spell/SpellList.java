@@ -20,12 +20,12 @@ import java.util.List;
 public class SpellList extends ContainerObjectSelectionList<SpellList.SpellEntry> {
 
     private final SpellManagerGUI screen;
-    private static final WidgetSprites LETTER_SPRITES = new WidgetSprites(id("textbox_letter_gui"),id("textbox_letter_gui02"),id("textbox_letter_gui03"),
-            id("textbox_letter_gui02"));
-    private static final WidgetSprites OPTION_SPRITES = new WidgetSprites(id("textbox_gui"),id("textbox_gui02"),id("textbox_gui"),
-            id("textbox_gui02"));
-    private static final WidgetSprites CONFIRM_SPRITES = new WidgetSprites(id("textbox_confirm_gui"),id("textbox_confirm_gui02"),id("textbox_confirm_gui"),
-            id("textbox_confirm_gui02"));
+    private static final WidgetSprites LETTER_SPRITES = new WidgetSprites(id("textbox_letter_gui"),id("textbox_letter_gui03"),id("textbox_letter_gui02"),
+            id("textbox_letter_gui03"));
+    private static final WidgetSprites OPTION_SPRITES = new WidgetSprites(id("textbox_gui"),id("textbox_gui03"),id("textbox_gui02"),
+            id("textbox_gui03"));
+    private static final WidgetSprites CONFIRM_SPRITES = new WidgetSprites(id("textbox_confirm_gui"),id("textbox_confirm_gui03"),id("textbox_confirm_gui02"),
+            id("textbox_confirm_gui03"));
 
     private static ResourceLocation id(String path) {
         return ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID, path);
@@ -51,6 +51,7 @@ public class SpellList extends ContainerObjectSelectionList<SpellList.SpellEntry
         private final TextImageButton spellButton;
         private final TextImageButton replaceButton;
         private final TextImageButton removeButton;
+        private SpellManagerGUI menu;
 
         public SpellEntry(SpellManagerGUI screen, UnicornSpell spell, int spellIndex) {
             spellButton = new TextImageButton(0,0,86,29,OPTION_SPRITES,button -> screen.assignSpell(spellIndex),Component.literal(spell.name()),
@@ -61,6 +62,8 @@ public class SpellList extends ContainerObjectSelectionList<SpellList.SpellEntry
 
             removeButton = new TextImageButton(0,0,29,29,LETTER_SPRITES,button -> screen.removeSpell(spellIndex),Component.literal("X"),
                     screen.getMinecraft().font);
+
+            menu=screen;
         }
 
 
@@ -75,10 +78,11 @@ public class SpellList extends ContainerObjectSelectionList<SpellList.SpellEntry
             removeButton.setX(left + 183);
             removeButton.setY(top);
 
-
             spellButton.render(guiGraphics, mouseX, mouseY, partialTick);
             replaceButton.render(guiGraphics, mouseX, mouseY, partialTick);
             removeButton.render(guiGraphics, mouseX, mouseY, partialTick);
+            spellButton.active = menu.hasSlot;
+            replaceButton.active = menu.canCreate();
         }
 
 

@@ -1,7 +1,11 @@
 package net.ona.mlpfrien.network;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.data.PonyAttachments;
@@ -11,18 +15,29 @@ import net.ona.mlpfrien.magic.UnicornData;
 import net.ona.mlpfrien.magic.UnicornSpell;
 import net.ona.mlpfrien.magic.UnicornSpells;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class ServerPayloadHandler {
+    public static void applyRaceModifiers(PonyData data, Player player){
+        for (PonyData.RACES race : PonyData.RACES.values()) {
+            List<PonyData.RaceModifiers> modifiers = race.getRaceModifiers();
+            for (PonyData.RaceModifiers modifier : modifiers) {
+                Objects.requireNonNull(player.getAttribute(modifier.attribute())).removeModifier(modifier.id());
+            }
+        }
+        List<PonyData.RaceModifiers> modifiers = data.race().getRaceModifiers();
+        for (PonyData.RaceModifiers modifier : modifiers) {
+            Objects.requireNonNull(player.getAttribute(modifier.attribute()))
+                    .addPermanentModifier(new AttributeModifier(modifier.id(), modifier.amount(), modifier.operation()));
+        }
+    }
 
     public static void handlePonyData(PonyDataPayload payload, IPayloadContext context) {
         if (!(context.player() instanceof ServerPlayer player)) {
             return;
         }
         PonyData newData = payload.data();
+        applyRaceModifiers(newData,player);
         player.setData(PonyAttachments.PONY_DATA, newData);
     }
 
@@ -52,13 +67,14 @@ public class ServerPayloadHandler {
         UnicornData data = player.getData(PonyAttachments.UNICORN_DATA);
         Optional<UnicornSpell> spell = data.equippedSpells().get(payload.slot());
         if (spell.isEmpty()) {
-            player.displayClientMessage(Component.literal("No spell equipped in slot "+payload.slot()), true);
+            player.displayClientMessage(Component.literal("No spell equipped in slot "+(payload.slot()+1)), true);
             return;
         }
         if (data.mana()>=spell.get().cost()) {
             SpellCaster.castSpell(player, spell.get());
         } else {
-            player.displayClientMessage(Component.literal("Not enough mana! Missing "+(spell.get().cost()-data.mana())), true);
+            player.displayClientMessage(Component.literal("Not enough mana!"), true);
+            //Missing "+ Math.round(spell.get().cost()-data.mana())).withColor(0xFF0000)
         }
     }
 
@@ -68,9 +84,7 @@ public class ServerPayloadHandler {
         }
 
         UnicornData data = player.getData(PonyAttachments.UNICORN_DATA);
-
         List<UnicornSpell> spells = new ArrayList<>(data.spells());
-
         spells.add(payload.spell());
 
         player.setData(PonyAttachments.UNICORN_DATA, new UnicornData(List.copyOf(spells), data.equippedSpells(), data.spellSlots(), data.mana(), data.max_mana(), data.level()));

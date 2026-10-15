@@ -58,12 +58,12 @@ public class PonyCreatorGUI extends Screen {
     private static ResourceLocation id(String path) {
         return ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID, path);
     }
-    private static final WidgetSprites CONFIRM_SPRITES =
-            new WidgetSprites(id("textbox_confirm_gui"), id("textbox_confirm_gui"), id("textbox_confirm_gui02"),
-                    id("textbox_confirm_gui02"));
-    private static final WidgetSprites OPTION_SPRITES =
-            new WidgetSprites(id("textbox_gui"), id("textbox_gui"), id("textbox_gui02"),
-                    id("textbox_gui02"));
+    private static final WidgetSprites LETTER_SPRITES = new WidgetSprites(id("textbox_letter_gui"),id("textbox_letter_gui03"),id("textbox_letter_gui02"),
+            id("textbox_letter_gui03"));
+    private static final WidgetSprites OPTION_SPRITES = new WidgetSprites(id("textbox_gui"),id("textbox_gui03"),id("textbox_gui02"),
+            id("textbox_gui03"));
+    private static final WidgetSprites CONFIRM_SPRITES = new WidgetSprites(id("textbox_confirm_gui"),id("textbox_confirm_gui03"),id("textbox_confirm_gui02"),
+            id("textbox_confirm_gui03"));
     private static final ResourceLocation ColorBoxSprite = ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"textures/gui/colorbox_gui.png");
     private static final ResourceLocation DescriptionSprite = ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"textures/gui/description_gui.png");
 

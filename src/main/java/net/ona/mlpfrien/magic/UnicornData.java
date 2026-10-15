@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public record UnicornData(List<UnicornSpell> spells, List<Optional<UnicornSpell>> equippedSpells, int spellSlots, float mana, float max_mana, int level) {
     public static UnicornData defaultData() {
-        return new UnicornData(List.of(UnicornSpells.damage_bullet),List.of(Optional.of(UnicornSpells.damage_bullet)),2,50,50,1);
+        return new UnicornData(List.of(),List.of(),2,50,50,1);
     }
     public UnicornData {
         spells = List.copyOf(spells);

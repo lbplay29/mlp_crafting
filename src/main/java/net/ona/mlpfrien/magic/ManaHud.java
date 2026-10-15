@@ -4,6 +4,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.data.PonyAttachments;
 
@@ -13,11 +14,14 @@ public final class ManaHud {
     private static final ResourceLocation MANA_BAR_EMPTY = ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID, "textures/gui/manabar_empty.png");
 
     public static void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-        Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player == null) {
+        Player player = Minecraft.getInstance().player;
+        if (player == null) {
             return;
         }
-        UnicornData data = minecraft.player.getData(PonyAttachments.UNICORN_DATA);
+        if (!player.getData(PonyAttachments.PONY_DATA).race().canUseMagic()) {
+            return;
+        }
+        UnicornData data = player.getData(PonyAttachments.UNICORN_DATA);
 
         int barWidth = 138;
         int barHeight = 25;
@@ -32,7 +36,7 @@ public final class ManaHud {
         int frameCount = 5;
         int ticksPerFrame = 5;
 
-        int frame = (minecraft.player.tickCount / ticksPerFrame) % frameCount;
+        int frame = (player.tickCount / ticksPerFrame) % frameCount;
         int v = frame * frameHeight;
         float percentage = data.max_mana() <= 0 ? 0 : data.mana() / data.max_mana();
         int filledWidth = (int)(frameWidth * percentage);

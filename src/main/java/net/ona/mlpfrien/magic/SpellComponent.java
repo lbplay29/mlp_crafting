@@ -6,6 +6,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -23,12 +24,13 @@ public enum SpellComponent {
         public void apply(SpellContext context) {
             if (context.getTarget() instanceof LivingEntity target) {
                 target.hurt(context.getCaster().damageSources().magic(), 4.0F*(2*context.getPower()));
-            } else {
-                BlockState block = context.getCaster().level().getBlockState(BlockPos.containing(context.getBlockTarget()));
-                if (block.is(BlockTags.SCULK_REPLACEABLE)) {
-                    context.getCaster().level().removeBlock(BlockPos.containing(context.getBlockTarget()),false);
-                }
             }
+//            else {
+//                BlockState block = context.getCaster().level().getBlockState(BlockPos.containing(context.getBlockTarget()));
+//                if (block.is(BlockTags.SCULK_REPLACEABLE)) {
+//                    context.getCaster().level().removeBlock(BlockPos.containing(context.getBlockTarget()),false);
+//                }
+//            }
         }
     },
 
@@ -86,19 +88,19 @@ public enum SpellComponent {
     TOUCH(SpellComponentType.FORM) {
         @Override
         public void apply(SpellContext context) {
-            HitResult hit = context.getCaster().pick(10*context.getPower(), 1.0F, false);
-
-            if (hit.getType() == HitResult.Type.BLOCK) {
-                BlockHitResult blockHit = (BlockHitResult) hit;
-
-                Vec3 pos = blockHit.getLocation();
-                context.setBlockTarget(pos);
-            }
-            if (hit.getType() == HitResult.Type.ENTITY) {
-                assert hit instanceof EntityHitResult;
-                EntityHitResult result = (EntityHitResult) hit;
-
-                context.setTarget(result.getEntity());
+            double distance = 10 * context.getPower();
+            HitResult hit = ProjectileUtil.getHitResultOnViewVector(context.getCaster(), entity -> entity.canBeHitByProjectile() && entity != context.getCaster(), distance);
+            switch (hit.getType()) {
+                case ENTITY -> {
+                    EntityHitResult entityHit = (EntityHitResult) hit;
+                    context.setTarget(entityHit.getEntity());
+                    context.setBlockTarget(entityHit.getLocation());
+                }
+                case BLOCK -> context.setBlockTarget(hit.getLocation());
+                case MISS -> {
+                    Vec3 endPos = context.getCaster().getEyePosition().add(context.getCaster().getViewVector(1.0F).scale(distance));
+                    context.setBlockTarget(endPos);
+                }
             }
         }
     },
@@ -112,14 +114,14 @@ public enum SpellComponent {
                         context.getTarget().getX(),
                         context.getTarget().getY(),
                         context.getTarget().getZ(),
-                        3.0F*context.getPower(), Level.ExplosionInteraction.MOB);
+                        context.getPower(), Level.ExplosionInteraction.MOB);
             } else {
                 context.getCaster().level().explode(
                         context.getCaster(),
                         context.getBlockTarget().x,
                         context.getBlockTarget().y,
                         context.getBlockTarget().z,
-                        3.0F*context.getPower(), Level.ExplosionInteraction.MOB);
+                        context.getPower(), Level.ExplosionInteraction.MOB);
             }
         }
     },

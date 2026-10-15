@@ -3,6 +3,7 @@ package net.ona.mlpfrien;
 import net.ona.mlpfrien.data.PonyAttachments;
 import net.ona.mlpfrien.init.PonyEntities;
 import net.ona.mlpfrien.init.PonyItems;
+import net.ona.mlpfrien.init.PonyTriggers;
 import net.ona.mlpfrien.network.PonyNetworking;
 import org.slf4j.Logger;
 
@@ -37,6 +38,7 @@ public class MyLittlePonyCraftingFriends {
         modEventBus.addListener(PonyNetworking::registerPayloads);
         PonyItems.register(modEventBus);
         PonyEntities.ENTITY_TYPES.register(modEventBus);
+        PonyTriggers.TRIGGERS.register(modEventBus);
 
         modEventBus.addListener(this::addCreative);
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

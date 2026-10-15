@@ -6,6 +6,7 @@ import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.data.PonyAttachments;
@@ -27,24 +28,31 @@ public class SpellManagerGUI extends Screen {
         super(Component.literal("penor"));
     }
 
+    private Player player;
     private final List<SpellComponent> editingComponents = new ArrayList<>();
     private final List<AbstractWidget> spellComponentButtons = new ArrayList<>();
     private String editingName = "";
     private int selectedSlot = 0;
     private EditBox spellNameBox;
     private SpellList spellList;
+    public boolean hasSlot;
+    private TextImageButton createButton;
+    private final List<TextImageButton> slotButtons = new ArrayList<>();
     private UnicornData lastData;
-    private static final WidgetSprites LETTER_SPRITES = new WidgetSprites(id("textbox_letter_gui"),id("textbox_letter_gui02"),id("textbox_letter_gui03"),
-            id("textbox_letter_gui02"));
-    private static final WidgetSprites OPTION_SPRITES = new WidgetSprites(id("textbox_gui"),id("textbox_gui02"),id("textbox_gui"),
-            id("textbox_gui02"));
-    private static final WidgetSprites CONFIRM_SPRITES = new WidgetSprites(id("textbox_confirm_gui"),id("textbox_confirm_gui02"),id("textbox_confirm_gui"),
-            id("textbox_confirm_gui02"));
+    private static final WidgetSprites LETTER_SPRITES = new WidgetSprites(id("textbox_letter_gui"),id("textbox_letter_gui03"),id("textbox_letter_gui02"),
+            id("textbox_letter_gui03"));
+    private static final WidgetSprites OPTION_SPRITES = new WidgetSprites(id("textbox_gui"),id("textbox_gui03"),id("textbox_gui02"),
+            id("textbox_gui03"));
+    private static final WidgetSprites CONFIRM_SPRITES = new WidgetSprites(id("textbox_confirm_gui"),id("textbox_confirm_gui03"),id("textbox_confirm_gui02"),
+            id("textbox_confirm_gui03"));
 
     private static ResourceLocation id(String path) {
         return ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID, path);
     }
 
+    public boolean canCreate() {
+        return !editingComponents.isEmpty() && !spellNameBox.getValue().isBlank();
+    }
 
     private WidgetSprites getComponent(SpellComponent component) {
         return switch (component) {
@@ -70,10 +78,25 @@ public class SpellManagerGUI extends Screen {
                     ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"heal"));
         };
     }
+    private Component getTooltipComponent(SpellComponent component) {
+        return switch (component) {
+            case DAMAGE -> Component.literal("Damage - Deals damage to a target");
+            case TELEPORT -> Component.literal("Teleport - Teleports the caster to a target");
+            case AMPLIFY -> Component.literal("Amplify - Increases the effect of the next component");
+            case WAIT -> Component.literal("Wait - Delays the next component by a second");
+            case FIRE -> Component.literal("Fire - Sets fire to a target");
+            case SELF -> Component.literal("Self - Sets the target to the caster");
+            case PROJECTILE -> Component.literal("Projectile - Fires a beam that can hit a target");
+            case TOUCH -> Component.literal("Touch - Sets the target to the caster's looking position");
+            case EXPLODE -> Component.literal("Explode - Triggers an explosion at the target");
+            case HEAL -> Component.literal("Heal - Heals a target");
+        };
+    }
 
     @Override
     protected void init() {
         super.init();
+        player = Minecraft.getInstance().player;
         spellNameBox = new EditBox(font, 20, 20, 120, 20, Component.literal("Spell Name"));
 
         spellNameBox.setMaxLength(32);
@@ -93,43 +116,36 @@ public class SpellManagerGUI extends Screen {
 
         addRenderableWidget(spellList);
         for (int i = 0; i < data.spellSlots(); i++) {
-
             int slot = i;
-
-            addRenderableWidget(new TextImageButton(this.width/2-50 + (i * 33), this.height/2+80, 29, 29,LETTER_SPRITES,button -> {
-                selectedSlot = slot;},Component.literal(String.valueOf(i+1)),this.font));
+            slotButtons.add(new TextImageButton(this.width/2-50 + (i * 33), this.height/2+80, 29, 29,LETTER_SPRITES,button -> {
+                selectedSlot = slot;
+                hasSlot = true;},Component.literal(String.valueOf(i+1)),this.font));
+            addRenderableWidget(slotButtons.get(i));
         }
-
-        addRenderableWidget(new TextImageButton(this.width/2-50, this.height/2-100, 56, 29,CONFIRM_SPRITES,
-                button -> createSpell(),Component.literal("Create"),this.font));
+        createButton = new TextImageButton(this.width/2-50, this.height/2-100, 56, 29,CONFIRM_SPRITES,
+                button -> createSpell(),Component.literal("Create"),this.font);
+        addRenderableWidget(createButton);
     }
 
     public void assignSpell(int spellIndex) {
-        MyLittlePonyCraftingFriends.LOGGER.info("CLIENT EQUIP: slot=" + selectedSlot
-                + " spell=" + spellIndex);
-        PacketDistributor.sendToServer(
-                new EquipSpellPayload(selectedSlot, spellIndex)
-        );
+        MyLittlePonyCraftingFriends.LOGGER.info("CLIENT EQUIP: slot=" + selectedSlot + " spell=" + spellIndex);
+        hasSlot=false;
+        PacketDistributor.sendToServer(new EquipSpellPayload(selectedSlot, spellIndex));
     }
     public void replaceSpell(int spellIndex) {
-
-        UnicornSpell newSpell = UnicornSpell.registerSpell(editingName,List.copyOf(editingComponents));
-
-        PacketDistributor.sendToServer(
-                new ReplaceSpellPayload(spellIndex, newSpell)
-        );
+        if (canCreate()) {
+            UnicornSpell newSpell = UnicornSpell.registerSpell(editingName,List.copyOf(editingComponents));
+            PacketDistributor.sendToServer(new ReplaceSpellPayload(spellIndex, newSpell));
+        }
     }
     private void createSpell() {
-        UnicornSpell newSpell = UnicornSpell.registerSpell(editingName,List.copyOf(editingComponents));
-
-        PacketDistributor.sendToServer(
-                new CreateSpellPayload(newSpell)
-        );
+        if (canCreate()) {
+            UnicornSpell newSpell = UnicornSpell.registerSpell(editingName,List.copyOf(editingComponents));
+            PacketDistributor.sendToServer(new CreateSpellPayload(newSpell));
+        }
     }
     public void removeSpell(int spellIndex) {
-        PacketDistributor.sendToServer(
-                new RemoveSpellPayload(spellIndex)
-        );
+        PacketDistributor.sendToServer(new RemoveSpellPayload(spellIndex));
     }
 
     @Override
@@ -140,13 +156,15 @@ public class SpellManagerGUI extends Screen {
         if (minecraft.player == null) {
             return;
         }
-
         UnicornData current = minecraft.player.getData(PonyAttachments.UNICORN_DATA);
 
         if (!current.equals(lastData)) {
             lastData = current;
-
             spellList.setSpells(current.spells());
+        }
+        createButton.active=canCreate();
+        for (TextImageButton slotButton : slotButtons) {
+            slotButton.active = !spellList.children().isEmpty();
         }
     }
 
@@ -169,9 +187,13 @@ public class SpellManagerGUI extends Screen {
             int y = startY + row * 22;
 
             ImageButton button = new ImageButton(x, y, 20, 20, getComponent(component), clicked -> {
-                                editingComponents.add(component);
-                                rebuildSpellComponentButtons();
-                            }, Component.literal(component.name()));
+                if (editingComponents.size()<6) {
+                    editingComponents.add(component);
+                    rebuildSpellComponentButtons();
+                } else {
+                    player.displayClientMessage(Component.literal("Spell can't contain more than 6 components"),true);
+                }}, Component.literal(component.name()));
+            button.setTooltip(Tooltip.create(getTooltipComponent(component)));
             addRenderableWidget(button);
         }
     }
@@ -195,6 +217,7 @@ public class SpellManagerGUI extends Screen {
                                 editingComponents.remove(index);
                                 rebuildSpellComponentButtons();
                             }, Component.literal(component.name()));
+            button.setTooltip(Tooltip.create(getTooltipComponent(component)));
             addRenderableWidget(button);
             spellComponentButtons.add(button);
         }
