@@ -49,49 +49,6 @@ public class PonyRenderer extends LivingEntityRenderer<AbstractClientPlayer, Pon
         return new Vec3(0.0, (double)(entity.getScale() * -2.0F) / 16.0, 0.0);
     }
 
-    private static HumanoidModel.ArmPose getArmPose(AbstractClientPlayer player, InteractionHand hand) {
-        ItemStack itemstack = player.getItemInHand(hand);
-        if (itemstack.isEmpty()) {
-            return HumanoidModel.ArmPose.EMPTY;
-        } else {
-            if (player.getUsedItemHand() == hand && player.getUseItemRemainingTicks() > 0) {
-                UseAnim useanim = itemstack.getUseAnimation();
-                if (useanim == UseAnim.BLOCK) {
-                    return HumanoidModel.ArmPose.BLOCK;
-                }
-
-                if (useanim == UseAnim.BOW) {
-                    return HumanoidModel.ArmPose.BOW_AND_ARROW;
-                }
-
-                if (useanim == UseAnim.SPEAR) {
-                    return HumanoidModel.ArmPose.THROW_SPEAR;
-                }
-
-                if (useanim == UseAnim.CROSSBOW && hand == player.getUsedItemHand()) {
-                    return HumanoidModel.ArmPose.CROSSBOW_CHARGE;
-                }
-
-                if (useanim == UseAnim.SPYGLASS) {
-                    return HumanoidModel.ArmPose.SPYGLASS;
-                }
-
-                if (useanim == UseAnim.TOOT_HORN) {
-                    return HumanoidModel.ArmPose.TOOT_HORN;
-                }
-
-                if (useanim == UseAnim.BRUSH) {
-                    return HumanoidModel.ArmPose.BRUSH;
-                }
-            } else if (!player.swinging && itemstack.getItem() instanceof CrossbowItem && CrossbowItem.isCharged(itemstack)) {
-                return HumanoidModel.ArmPose.CROSSBOW_HOLD;
-            }
-            HumanoidModel.ArmPose forgeArmPose = net.neoforged.neoforge.client.extensions.common.IClientItemExtensions.of(itemstack).getArmPose(player, hand, itemstack);
-            if (forgeArmPose != null) return forgeArmPose;
-
-            return HumanoidModel.ArmPose.ITEM;
-        }
-    }
     public @NotNull ResourceLocation getTextureLocation(AbstractClientPlayer player) {
         try {
             return PonyTextureManager.getTexture(player);
@@ -169,7 +126,7 @@ public class PonyRenderer extends LivingEntityRenderer<AbstractClientPlayer, Pon
             super.setupRotations(entity, poseStack, bob, yBodyRot, partialTick, scale);
             float f4 = entity.isInWater() || entity.isInFluidType((fluidType, height) -> entity.canSwimInFluidType(fluidType)) ? -90.0F - entity.getXRot() : -90.0F;
             float f5 = Mth.lerp(f, 0.0F, f4);
-            poseStack.mulPose(Axis.XP.rotationDegrees(f5+(-90)));
+            poseStack.mulPose(Axis.XP.rotationDegrees(f5+(90)));
             if (entity.isVisuallySwimming()) {
                 poseStack.translate(0.0F, -1.0F, 0.3F);
             }

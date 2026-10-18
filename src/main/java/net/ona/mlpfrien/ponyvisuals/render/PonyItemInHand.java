@@ -9,12 +9,12 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.ona.mlpfrien.data.PonyAttachments;
 import net.ona.mlpfrien.data.PonyData;
+import net.ona.mlpfrien.init.PonyTags;
 import net.ona.mlpfrien.ponyvisuals.models.PonyModel;
 
 @OnlyIn(Dist.CLIENT)
@@ -26,45 +26,84 @@ public class PonyItemInHand<T extends AbstractClientPlayer, M extends PonyModel<
         this.itemInHandRenderer = itemInHandRenderer;
     }
 
-    public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T livingEntity, float limbSwing, float limbSwingAmount, float partialTicks,
-            float ageInTicks, float netHeadYaw, float headPitch) {
-        boolean flag = livingEntity.getMainArm() == HumanoidArm.RIGHT;
-        ItemStack itemstack = flag ? livingEntity.getOffhandItem() : livingEntity.getMainHandItem();
-        ItemStack itemstack1 = flag ? livingEntity.getMainHandItem() : livingEntity.getOffhandItem();
-        if (!itemstack.isEmpty() || !itemstack1.isEmpty()) {
-            poseStack.pushPose();
+    @Override
+    public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight,
+            T livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+        ItemStack mainHand = livingEntity.getMainHandItem();
+        ItemStack offHand = livingEntity.getOffhandItem();
 
-            this.renderArmWithItem(livingEntity, itemstack1, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, poseStack, buffer, packedLight);
-            this.renderArmWithItem(livingEntity, itemstack, ItemDisplayContext.THIRD_PERSON_LEFT_HAND, HumanoidArm.LEFT, poseStack, buffer, packedLight);
-            poseStack.popPose();
+        if (!mainHand.isEmpty()) {
+            renderMainHandItem(livingEntity, mainHand, poseStack, buffer, packedLight);
+        }
+
+        if (!offHand.isEmpty()) {
+            HumanoidArm offArm = livingEntity.getMainArm() == HumanoidArm.RIGHT ? HumanoidArm.LEFT : HumanoidArm.RIGHT;
+            renderOffhandItem(livingEntity, offHand, offArm, poseStack, buffer, packedLight);
         }
     }
 
-    protected void renderArmWithItem(LivingEntity livingEntity, ItemStack itemStack, ItemDisplayContext displayContext, HumanoidArm arm, PoseStack poseStack,
-            MultiBufferSource buffer, int packedLight) {
-        if (!itemStack.isEmpty()) {
-            poseStack.pushPose();
-            PonyData data = livingEntity.getData(PonyAttachments.PONY_DATA);
-            if (data.race()== PonyData.RACES.UNICORN) {
-                getParentModel().root.translateAndRotate(poseStack);
-                getParentModel().heldItemU.translateAndRotate(poseStack);
-                poseStack.mulPose(Axis.ZP.rotationDegrees(180));
-            } else {
-                getParentModel().root.translateAndRotate(poseStack);
-                getParentModel().rightArm.translateAndRotate(poseStack);
-//                getParentModel().head.translateAndRotate(poseStack);
-                getParentModel().heldItem.translateAndRotate(poseStack);
-                poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
-                poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
-                poseStack.translate(-0.1,-0.1,0.5);
-//                poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
-//                poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-//                poseStack.translate(-0.2,0.1,0.8);
-            }
-            boolean flag = arm == HumanoidArm.LEFT;
-            poseStack.translate((float)(flag ? -1 : 1) / 4.0F, 0.125F, -0.625F);
-            this.itemInHandRenderer.renderItem(livingEntity, itemStack, displayContext, flag, poseStack, buffer, packedLight);
-            poseStack.popPose();
+    private void renderOffhandItem(T livingEntity, ItemStack stack, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        poseStack.pushPose();
+        getParentModel().root.translateAndRotate(poseStack);
+        if (arm == HumanoidArm.LEFT) {
+            getParentModel().leftArm.translateAndRotate(poseStack);
+        } else {
+            getParentModel().rightArm.translateAndRotate(poseStack);
+        }
+        poseStack.translate(0.0F, 0.1F, 0.125F);
+        poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
+        boolean leftHand = arm == HumanoidArm.LEFT;
+        ItemDisplayContext displayContext = leftHand ? ItemDisplayContext.THIRD_PERSON_LEFT_HAND : ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
+
+        this.itemInHandRenderer.renderItem(livingEntity, stack, displayContext, leftHand, poseStack, buffer, packedLight);
+
+        poseStack.popPose();
+    }
+
+    private void renderMainHandItem(T livingEntity, ItemStack stack, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        poseStack.pushPose();
+        PonyData data = livingEntity.getData(PonyAttachments.PONY_DATA);
+        getParentModel().root.translateAndRotate(poseStack);
+
+        if (data.race().canUseMagic()) {
+            getParentModel().heldItemU.translateAndRotate(poseStack);
+            poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        } else {
+            itemTypeMatch(stack, poseStack);
+        }
+        this.itemInHandRenderer.renderItem(livingEntity, stack, ItemDisplayContext.THIRD_PERSON_LEFT_HAND, true, poseStack, buffer, packedLight);
+        poseStack.popPose();
+    }
+
+
+    private void itemTypeMatch(ItemStack stack, PoseStack poseStack) {
+        getParentModel().head.translateAndRotate(poseStack);
+        getParentModel().heldItem.translateAndRotate(poseStack);
+        if (stack.is(PonyTags.HANDHELD)) {
+            poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
+            poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+            poseStack.translate(0,0.1,0);
+        } else if (stack.getItem() instanceof BlockItem) {
+            poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+            //poseStack.translate(-0.2,-0.2,0.6);
+        } else if (stack.getItem() instanceof PotionItem || stack.getItem() instanceof BottleItem){
+            poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+            poseStack.translate(0,-0.4,0);
+        } else if (stack.getItem() instanceof TridentItem) {
+            poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
+            poseStack.mulPose(Axis.XP.rotationDegrees(-30.0F));
+            poseStack.translate(0,0,-0.2);
+        } else if (stack.getItem() instanceof CrossbowItem) {
+            //poseStack.translate(-0.2,-0.2,0.5);
+        } else if (stack.getItem() instanceof BowItem) {
+            //poseStack.translate(-0.2,-0.2,0.5);
+        } else {
+            poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+            poseStack.translate(0,-0.1,-0.1);
         }
     }
 }

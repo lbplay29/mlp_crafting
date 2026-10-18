@@ -26,5 +26,15 @@ public class LItemTagProvider extends ItemTagsProvider {
                 .add(PonyItems.GREEN_APPLE.get())
                 .add(PonyItems.SOUR_APPLE.get())
                 .add(Items.APPLE);
+        tag(PonyTags.HANDHELD)
+                .addTag(ItemTags.PICKAXES)
+                .addTag(ItemTags.SHOVELS)
+                .addTag(ItemTags.SWORDS)
+                .addTag(ItemTags.HOES)
+                .add(Items.MACE)
+                .add(Items.FISHING_ROD)
+                .add(Items.CARROT_ON_A_STICK)
+                .add(Items.WARPED_FUNGUS_ON_A_STICK)
+                .addTag(ItemTags.AXES);
     }
 }

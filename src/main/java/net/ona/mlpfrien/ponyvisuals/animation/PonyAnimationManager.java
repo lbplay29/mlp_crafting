@@ -25,16 +25,16 @@ public class PonyAnimationManager {
     public static AnimationState attackType(Player entity) {
         PonyData data = entity.getData(PonyAttachments.PONY_DATA);
         float attackAnim = entity.getAttackAnim(entity.tickCount);
-
-        if (attackAnim > 0.0F && lastAttackAnim <= 0.0F) {
+// && lastAttackAnim <= 0.0F
+        if (attackAnim > 0.0F) {
             if (!entity.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
                 if (data.race() == PonyData.RACES.UNICORN) {
-                    uniAttack.start(entity.tickCount);
+                    uniAttack.startIfStopped(entity.tickCount);
                 } else {
-                    itemAttack.start(entity.tickCount);
+                    itemAttack.startIfStopped(entity.tickCount);
                 }
             } else {
-                headAttack.start(entity.tickCount);
+                headAttack.startIfStopped(entity.tickCount);
             }
         }
         lastAttackAnim = attackAnim;
@@ -49,7 +49,7 @@ public class PonyAnimationManager {
 
     public static void stopAnimation(AnimationState state, AnimationDefinition animation) {
         if (state.isStarted()) {
-            long durationMs = (long) (animation.lengthInSeconds() * 1000.0F);
+            long durationMs = (long) (animation.lengthInSeconds()*1000);
 
             if (state.getAccumulatedTime() >= durationMs) {
                 state.stop();

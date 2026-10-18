@@ -85,7 +85,7 @@ public class PonyClientEvents {
             } else if (!jumpDown) {
                 flightArmed= true;
             }
-            if (flightArmed && !wasJumping && jumpDown && cooldown<=0) {
+            if (flightArmed && !wasJumping && jumpDown && cooldown<=0 && !player.isInWater()) {
                 PacketDistributor.sendToServer(new PegasusFlightPayload());
                 cooldown = 60;
             }
