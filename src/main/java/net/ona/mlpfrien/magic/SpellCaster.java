@@ -2,8 +2,8 @@ package net.ona.mlpfrien.magic;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.data.PonyAttachments;
+import net.ona.mlpfrien.data.UnicornData;
 import net.ona.mlpfrien.init.PonyEntities;
 
 import java.util.List;

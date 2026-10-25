@@ -13,13 +13,17 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
+import net.ona.mlpfrien.data.AppearanceData;
 import net.ona.mlpfrien.data.PonyAttachments;
 import net.ona.mlpfrien.data.PonyData;
+import net.ona.mlpfrien.network.AppearanceDataPayload;
 import net.ona.mlpfrien.network.PonyDataPayload;
 import net.ona.mlpfrien.ponyvisuals.render.CutieMarkManager;
 import net.ona.mlpfrien.ponyvisuals.render.PonyTextureManager;
 import net.ona.mlpfrien.util.TextImageButton;
 import net.ona.mlpfrien.util.BasicUtilities;
+
+import static net.ona.mlpfrien.util.BasicUtilities.id;
 
 public class PonyCreatorGUI extends Screen {
     public PonyCreatorGUI() {
@@ -35,7 +39,8 @@ public class PonyCreatorGUI extends Screen {
         mane,
         other
     }
-    private PonyData editingData;
+    private PonyData ponyData;
+    private AppearanceData appearanceData;
     private Player player;
     private PonyData.RACES selectedRace;
     private ColorPickerWidget coatPicker;
@@ -50,13 +55,11 @@ public class PonyCreatorGUI extends Screen {
         LocalPlayer playerInit = Minecraft.getInstance().player;
         assert playerInit != null;
         player = playerInit;
-        editingData = player.getData(PonyAttachments.PONY_DATA);
-        selectedRace = PonyData.RACES.EARTH;
+        ponyData = player.getData(PonyAttachments.PONY_DATA);
+        appearanceData = player.getData(PonyAttachments.APPEARANCE_DATA);
+        selectedRace = ponyData.race();
 
         choosePage(PAGES.RACE);
-    }
-    private static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID, path);
     }
     private static final WidgetSprites LETTER_SPRITES = new WidgetSprites(id("textbox_letter_gui"),id("textbox_letter_gui03"),id("textbox_letter_gui02"),
             id("textbox_letter_gui03"));
@@ -64,8 +67,8 @@ public class PonyCreatorGUI extends Screen {
             id("textbox_gui03"));
     private static final WidgetSprites CONFIRM_SPRITES = new WidgetSprites(id("textbox_confirm_gui"),id("textbox_confirm_gui03"),id("textbox_confirm_gui02"),
             id("textbox_confirm_gui03"));
-    private static final ResourceLocation ColorBoxSprite = ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"textures/gui/colorbox_gui.png");
-    private static final ResourceLocation DescriptionSprite = ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"textures/gui/description_gui.png");
+    private static final ResourceLocation ColorBoxSprite = id("textures/gui/colorbox_gui.png");
+    private static final ResourceLocation DescriptionSprite = id("textures/gui/description_gui.png");
 
     private void choosePage(PAGES curPage) {
         switch (curPage) {
@@ -83,34 +86,34 @@ public class PonyCreatorGUI extends Screen {
             choosePage(PAGES.CREATOR);}, Component.literal("Confirm"), this.font));
         this.addRenderableWidget(new TextImageButton(this.width / 2 -175, this.height / 2 - 10, 86, 29, OPTION_SPRITES, button ->{
             selectedRace= PonyData.RACES.PEGASUS;
-            updateTexture(player, withRace(selectedRace,editingData));}, Component.literal("Pegasus"), this.font));
+            updateTextureP(player, withRace(selectedRace,ponyData));}, Component.literal("Pegasus"), this.font));
         this.addRenderableWidget(new TextImageButton(this.width / 2 -175, this.height / 2 + 25, 86, 29, OPTION_SPRITES, button ->{
             selectedRace= PonyData.RACES.UNICORN;
-            updateTexture(player, withRace(selectedRace,editingData));}, Component.literal("Unicorn"), this.font));
+            updateTextureP(player, withRace(selectedRace,ponyData));}, Component.literal("Unicorn"), this.font));
         this.addRenderableWidget(new TextImageButton(this.width / 2 -175, this.height / 2 - 45, 86, 29, OPTION_SPRITES, button ->{
             selectedRace= PonyData.RACES.EARTH;
-            updateTexture(player, withRace(selectedRace,editingData));}, Component.literal("Earth Pony"), this.font));
+            updateTextureP(player, withRace(selectedRace,ponyData));}, Component.literal("Earth Pony"), this.font));
     }
 
     private void buildPageTwo() {
         clearWidgets();
-        this.addRenderableWidget(new TextImageButton(this.width / 2 -20, this.height / 2 - 80, 86, 29, OPTION_SPRITES, button ->{
+        this.addRenderableWidget(new TextImageButton(this.width / 2 -60, this.height / 2 - 90, 86, 29, OPTION_SPRITES, button ->{
             updateTab(TABS.body);}, Component.literal("Body"), this.font));
-        this.addRenderableWidget(new TextImageButton(this.width / 2 +70, this.height / 2 - 80, 86, 29, OPTION_SPRITES, button ->{
+        this.addRenderableWidget(new TextImageButton(this.width / 2 +30, this.height / 2 - 90, 86, 29, OPTION_SPRITES, button ->{
             updateTab(TABS.mane);}, Component.literal("Mane"), this.font));
-        this.addRenderableWidget(new TextImageButton(this.width / 2 +160, this.height / 2 - 80, 86, 29, OPTION_SPRITES, button ->{
+        this.addRenderableWidget(new TextImageButton(this.width / 2 +120, this.height / 2 - 90, 86, 29, OPTION_SPRITES, button ->{
             updateTab(TABS.other);}, Component.literal("Eyes"), this.font));
         maneStyleButton = new TextImageButton(this.width / 2 +60, this.height / 2 +100, 86, 29, OPTION_SPRITES, button ->{
-            updateTexture(player, withManeStyle(BasicUtilities
-                    .loopingInt(5,editingData.maneStyle()),editingData));}, Component.literal("Mane Style: "+editingData.maneStyle()), this.font);
+            updateTextureA(player, withManeStyle(BasicUtilities
+                    .loopingInt(5,appearanceData.maneStyle()),appearanceData));}, Component.literal("Mane Style: "+appearanceData.maneStyle()), this.font);
         this.addRenderableWidget(maneStyleButton);
 
-        coatPicker = new ColorPickerWidget(this.width / 2 + 60, this.height / 2, 120, 70, editingData.coatColor(),
-                newColor -> {updateTexture(player, withCoatColor(newColor,editingData));});
-        manePicker = new ColorPickerWidget(this.width / 2 + 60, this.height / 2, 120, 70, editingData.maneColor(),
-                newColor -> {updateTexture(player, withManeColor(newColor,editingData));});
-        eyePicker = new ColorPickerWidget(this.width / 2 + 60, this.height / 2, 120, 70, editingData.eyeColor(),
-                newColor -> {updateTexture(player, withEyeColor(newColor,editingData));});
+        coatPicker = new ColorPickerWidget(this.width / 2 + 62, this.height / 2-46, 120, 70, appearanceData.coatColor(),
+                newColor -> {updateTextureA(player, withCoatColor(newColor,appearanceData));});
+        manePicker = new ColorPickerWidget(this.width / 2 + 62, this.height / 2-46, 120, 70, appearanceData.maneColor(),
+                newColor -> {updateTextureA(player, withManeColor(newColor,appearanceData));});
+        eyePicker = new ColorPickerWidget(this.width / 2 + 62, this.height / 2-46, 120, 70, appearanceData.eyeColor(),
+                newColor -> {updateTextureA(player, withEyeColor(newColor,appearanceData));});
         updateTab(TABS.body);
 
         this.addRenderableWidget(manePicker);
@@ -159,7 +162,8 @@ public class PonyCreatorGUI extends Screen {
         LocalPlayer playerRender = Minecraft.getInstance().player;
         assert playerRender!=null;
         player = playerRender;
-        editingData = player.getData(PonyAttachments.PONY_DATA);
+        ponyData = player.getData(PonyAttachments.PONY_DATA);
+        appearanceData = player.getData(PonyAttachments.APPEARANCE_DATA);
 
         switch (thisPage) {
             case RACE -> {
@@ -185,12 +189,12 @@ public class PonyCreatorGUI extends Screen {
 
         switch (thisPage) {
             case CREATOR -> {
-                guiGraphics.blit(ColorBoxSprite,this.width / 2 + 51, this.height / 2-8,0,0,138,101,138,101);
+                guiGraphics.blit(ColorBoxSprite,this.width / 2 + 53, this.height / 2-54,0,0,138,101,138,101);
             }
         }
     }
 
-    private void updateText(PonyData data) {
+    private void updateText(AppearanceData data) {
         if (!(maneStyleButton ==null)) {
             removeWidget(maneStyleButton);
             maneStyleButton.setMessage(Component.literal("Mane Style: "+data.maneStyle()));
@@ -198,25 +202,29 @@ public class PonyCreatorGUI extends Screen {
         }
     }
 
-    public void updateTexture(Player player, PonyData data) {
+    public void updateTextureP(Player player, PonyData data) {
         PacketDistributor.sendToServer(new PonyDataPayload(data));
+        PonyTextureManager.createTexture((AbstractClientPlayer) player);
+    }
+    public void updateTextureA(Player player, AppearanceData data) {
+        PacketDistributor.sendToServer(new AppearanceDataPayload(data));
         PonyTextureManager.createTexture((AbstractClientPlayer) player);
         updateText(data);
     }
 
     public PonyData withRace(PonyData.RACES newRace, PonyData curData) {
-        return new PonyData(newRace, curData.cutieMark(), curData.maneStyle(), curData.coatColor(), curData.maneColor(), curData.eyeColor(),curData.discoveredCM());
+        return new PonyData(newRace, curData.cutieMark(),curData.discoveredCM());
     }
-    public PonyData withManeStyle(int newStyle, PonyData curData) {
-        return new PonyData(curData.race(), curData.cutieMark(), newStyle, curData.coatColor(), curData.maneColor(), curData.eyeColor(),curData.discoveredCM());
+    public AppearanceData withManeStyle(int newStyle, AppearanceData curData) {
+        return new AppearanceData(newStyle, curData.coatColor(), curData.maneColor(), curData.eyeColor());
     }
-    public PonyData withCoatColor(int newCoat, PonyData curData) {
-        return new PonyData(curData.race(), curData.cutieMark(), curData.maneStyle(), newCoat, curData.maneColor(), curData.eyeColor(),curData.discoveredCM());
+    public AppearanceData withCoatColor(int newCoat, AppearanceData curData) {
+        return new AppearanceData(curData.maneStyle(), newCoat, curData.maneColor(), curData.eyeColor());
     }
-    public PonyData withManeColor(int newMane, PonyData curData) {
-        return new PonyData(curData.race(), curData.cutieMark(), curData.maneStyle(), curData.coatColor(), newMane, curData.eyeColor(),curData.discoveredCM());
+    public AppearanceData withManeColor(int newMane, AppearanceData curData) {
+        return new AppearanceData(curData.maneStyle(), curData.coatColor(), newMane, curData.eyeColor());
     }
-    public PonyData withEyeColor(int newEye, PonyData curData) {
-        return new PonyData(curData.race(), curData.cutieMark(), curData.maneStyle(), curData.coatColor(), curData.maneColor(), newEye,curData.discoveredCM());
+    public AppearanceData withEyeColor(int newEye, AppearanceData curData) {
+        return new AppearanceData(curData.maneStyle(), curData.coatColor(), curData.maneColor(), newEye);
     }
 }

@@ -1,7 +1,6 @@
 package net.ona.mlpfrien.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -12,7 +11,7 @@ import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.data.PonyAttachments;
 import net.ona.mlpfrien.gui.spell.SpellList;
 import net.ona.mlpfrien.magic.SpellComponent;
-import net.ona.mlpfrien.magic.UnicornData;
+import net.ona.mlpfrien.data.UnicornData;
 import net.ona.mlpfrien.magic.UnicornSpell;
 import net.ona.mlpfrien.network.CreateSpellPayload;
 import net.ona.mlpfrien.network.EquipSpellPayload;
@@ -22,6 +21,8 @@ import net.ona.mlpfrien.util.TextImageButton;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static net.ona.mlpfrien.util.BasicUtilities.id;
 
 public class SpellManagerGUI extends Screen {
     public SpellManagerGUI() {
@@ -45,10 +46,6 @@ public class SpellManagerGUI extends Screen {
             id("textbox_gui03"));
     private static final WidgetSprites CONFIRM_SPRITES = new WidgetSprites(id("textbox_confirm_gui"),id("textbox_confirm_gui03"),id("textbox_confirm_gui02"),
             id("textbox_confirm_gui03"));
-
-    private static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID, path);
-    }
 
     public boolean canCreate() {
         return !editingComponents.isEmpty() && !spellNameBox.getValue().isBlank();

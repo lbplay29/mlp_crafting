@@ -6,6 +6,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
+import net.ona.mlpfrien.data.AppearanceData;
 import net.ona.mlpfrien.data.PonyAttachments;
 import net.ona.mlpfrien.data.PonyData;
 
@@ -23,10 +24,11 @@ public class PonyTextureManager {
 
     public static ResourceLocation getTexture(AbstractClientPlayer player) throws IOException {
         PonyData currentData = player.getData(PonyAttachments.PONY_DATA);
+        AppearanceData currentAppData = player.getData(PonyAttachments.APPEARANCE_DATA);
 
         PonyTexture cached = TEXTURES.get(player.getUUID());
 
-        if (cached == null||!currentData.equals(cached.lastData)) {
+        if (cached == null||!currentData.equals(cached.lastData)||!currentAppData.equals(cached.lastAppData)) {
             return createTexture(player);
         }
         return cached.location;
@@ -34,7 +36,8 @@ public class PonyTextureManager {
 
 
     public static ResourceLocation createTexture(AbstractClientPlayer player) {
-        PonyData data = player.getData(PonyAttachments.PONY_DATA);
+        AppearanceData data = player.getData(PonyAttachments.APPEARANCE_DATA);
+        PonyData dataP = player.getData(PonyAttachments.PONY_DATA);
         try {
             NativeImage image = loadBaseTexture();
 
@@ -47,7 +50,7 @@ public class PonyTextureManager {
             ResourceLocation location = ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID, "dynamic/pony/" + player.getUUID());
             Minecraft.getInstance().getTextureManager().register(location, texture);
 
-            TEXTURES.put(player.getUUID(), new PonyTexture(location, texture,data));
+            TEXTURES.put(player.getUUID(), new PonyTexture(location, texture,dataP,data));
             return location;
 
         } catch (IOException e) {
@@ -142,5 +145,5 @@ public class PonyTextureManager {
         return 0xFF000000 | (b << 16) | (g << 8) | r;
     }
 
-    private record PonyTexture(ResourceLocation location, DynamicTexture texture, PonyData lastData) {}
+    private record PonyTexture(ResourceLocation location, DynamicTexture texture, PonyData lastData, AppearanceData lastAppData) {}
 }

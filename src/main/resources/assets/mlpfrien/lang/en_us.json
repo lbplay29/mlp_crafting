@@ -6,6 +6,9 @@
   "item.mlpfrien.sour_apple": "Sweet Apple",
   "item.mlpfrien.green_apple": "Green Apple",
 
+  "advancements.story.cutie_mark.description": "Discover your special talent",
+  "advancements.story.cutie_mark.title": "Mah Cutie Mark!",
+
   "mlpfrien.configuration.title": "My Little Pony: Crafting Friends Configs",
   "mlpfrien.configuration.section.mlpfrien.common.toml": "My Little Pony: Crafting Friends Configs",
   "mlpfrien.configuration.section.mlpfrien.common.toml.title": "My Little Pony: Crafting Friends Configs",
@@ -16,5 +19,13 @@
   "key.mlpfrien.menu": "Charater Info Screen",
   "key.categories.mlpfrien": "My Little Pony: Crafting Friends",
   "key.mlpfrien.skill": "Cast Spell",
-  "key.mlpfrien.skill_two": "Second Spell"
+  "key.mlpfrien.skill_two": "Second Spell",
+  "skill.mlpfrien.root_cm": "Cutie Mark",
+  "skill.mlpfrien.root_cm.description": "You finally found your Cutie Mark, and many abilities come from your talent",
+  "skill.mlpfrien.high_range": "High Range",
+  "skill.mlpfrien.high_range.description": "You can place and break 3 blocks further than usual",
+  "skill.mlpfrien.fall_resist": "Resist Falling",
+  "skill.mlpfrien.fall_resist.description": "You need to fall from 10 blocks higher to start taking fall damage",
+  "skill.mlpfrien.fast_mining": "Fast Mining",
+  "skill.mlpfrien.fast_mining.description": "You mine blocks 25% faster"
 }

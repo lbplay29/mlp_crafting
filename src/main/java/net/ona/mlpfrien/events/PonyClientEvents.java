@@ -18,6 +18,7 @@ import net.ona.mlpfrien.data.PonyData;
 import net.ona.mlpfrien.init.PonyEntities;
 import net.ona.mlpfrien.magic.ManaHud;
 import net.ona.mlpfrien.network.PegasusFlightPayload;
+import net.ona.mlpfrien.network.PonyDataPayload;
 import net.ona.mlpfrien.network.SpellCastPayload;
 import net.ona.mlpfrien.gui.PonyCreatorGUI;
 import net.ona.mlpfrien.gui.PonyInfoGUI;
@@ -98,11 +99,9 @@ public class PonyClientEvents {
     }
 
     @SubscribeEvent
-    public static void joiningWorld(ClientPlayerNetworkEvent.LoggingIn event) {
-        Player player = event.getPlayer();
-        if (player.getData(PonyAttachments.PONY_DATA).cutieMark()== PonyData.CUTIE_MARKS.BLANK) {
-            Minecraft.getInstance().setScreen(new PonyCreatorGUI());
-        }
+    public static void playerDeath(ClientPlayerNetworkEvent.Clone event) {
+        event.getNewPlayer().setScore(event.getOldPlayer().getScore());
+        PacketDistributor.sendToServer(new PonyDataPayload(event.getOldPlayer().getData(PonyAttachments.PONY_DATA)));
     }
 
     @SubscribeEvent

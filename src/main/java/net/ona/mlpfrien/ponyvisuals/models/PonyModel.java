@@ -19,9 +19,11 @@ import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.Vec3;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
+import net.ona.mlpfrien.data.AppearanceData;
 import net.ona.mlpfrien.data.PonyAttachments;
 import net.ona.mlpfrien.data.PonyData;
 import net.ona.mlpfrien.ponyvisuals.animation.PonyAnimationLogic;
@@ -31,6 +33,8 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 
 public class PonyModel<T extends AbstractClientPlayer> extends HierarchicalModel<T> {
@@ -401,11 +405,14 @@ public class PonyModel<T extends AbstractClientPlayer> extends HierarchicalModel
 	private final List<AnimationState> states = List.of(new AnimationState(),new AnimationState(),new AnimationState(),new AnimationState(),new AnimationState()
 	,new AnimationState(),new AnimationState(),new AnimationState(),new AnimationState());
 	private AnimationDefinition armAnimation = PonyAnimation.block;
+	private final Map<AbstractClientPlayer, LeanState> leanStates = new WeakHashMap<>();
+	private static class LeanState { float forwardLean = 0.0F;float sideLean = 0.0F;}
 
 	@Override
 	public void setupAnim(AbstractClientPlayer entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 		PonyData data = entity.getData(PonyAttachments.PONY_DATA);
+		AppearanceData dataA = entity.getData(PonyAttachments.APPEARANCE_DATA);
 		if (data.race()== PonyData.RACES.EARTH) {
 			this.wings.visible = false;
 			this.Horn.visible = false;
@@ -417,7 +424,7 @@ public class PonyModel<T extends AbstractClientPlayer> extends HierarchicalModel
 			this.Horn.visible = true;
 		}
 		for (int i=0;i<this.maneStyles;i++) {
-			this.hairs.getChild("hair_"+i).visible= data.maneStyle() == i;
+			this.hairs.getChild("hair_"+i).visible= dataA.maneStyle() == i;
 		}
 		crouching =entity.isCrouching();
 		swimAmount=entity.getSwimAmount(ageInTicks);
@@ -426,47 +433,6 @@ public class PonyModel<T extends AbstractClientPlayer> extends HierarchicalModel
 		PonyAnimationController controller = PonyAnimationManager.get(entity);
 		controller.transitionTo(getDesiredAnimation(entity), ageInTicks);
 		controller.apply(this, ageInTicks, animationCache);
-
-		if (entity.swingingArm==InteractionHand.MAIN_HAND) {
-			switch (getArmPose(entity, entity.swingingArm)) {
-				case ITEM -> {
-					switchHandState(0, (int) ageInTicks);
-					armAnimation = PonyAnimation.item;
-				}
-				case BLOCK -> {
-					switchHandState(1, (int) ageInTicks);
-					armAnimation = PonyAnimation.block;
-				}
-				case BOW_AND_ARROW -> {
-					switchHandState(2, (int) ageInTicks);
-					armAnimation = PonyAnimation.bow;
-				}
-				case THROW_SPEAR -> {
-					switchHandState(3, (int) ageInTicks);
-					armAnimation = PonyAnimation.throw_spear;
-				}
-				case CROSSBOW_CHARGE -> {
-					switchHandState(4, (int) ageInTicks);
-					armAnimation = PonyAnimation.crossbow_charge;
-				}
-				case CROSSBOW_HOLD -> {
-					switchHandState(5, (int) ageInTicks);
-					armAnimation = PonyAnimation.crossbow_hold;
-				}
-				case SPYGLASS -> {
-					switchHandState(6, (int) ageInTicks);
-					armAnimation = PonyAnimation.spyglass;
-				}
-				case TOOT_HORN -> {
-					switchHandState(7, (int) ageInTicks);
-					armAnimation = PonyAnimation.toot_horn;
-				}
-				case BRUSH -> {
-					switchHandState(8, (int) ageInTicks);
-					armAnimation = PonyAnimation.brush;
-				}
-			}
-		}
 
 		this.rotateHead(netHeadYaw, headPitch);
 		Vec3 movement = new Vec3(entity.getDeltaMovement().x, 0, entity.getDeltaMovement().z);
@@ -481,19 +447,56 @@ public class PonyModel<T extends AbstractClientPlayer> extends HierarchicalModel
 				animateWalk(PonyAnimation.walk, swing, limbSwingAmount, 2f, 0.5F);
 			} else {
 				if (entity.isSprinting()) {
-					animateWalk(PonyAnimation.run, swing, limbSwingAmount, 2f, 1.0F);
-					animateWalk(PonyAnimation.run, swing, limbSwingAmount, 2f, 0.5F);
-					head.setRotation(head.xRot*2,head.yRot*2,head.zRot*2);
+					animateWalk(PonyAnimation.run, swing, limbSwingAmount, 1.8f, 1.0F);
+					animateWalk(PonyAnimation.run, swing, limbSwingAmount, 1.8f, 0.25F);
 				} else {
 					animateWalk(PonyAnimation.walk, swing, limbSwingAmount, 2f, 1.0F);
 				}
 			}
-
 		}
+		applyMovementLean(entity);
+
 		//animate(playingHand(),armAnimation,ageInTicks);
 		animate(PonyAnimationManager.attackType(entity),PonyAnimationManager.attackGet(entity),ageInTicks);
 		PonyAnimationManager.stopAnimation(PonyAnimationManager.attackType(entity),PonyAnimationManager.attackGet(entity));
 		applyHeldItemPose(entity);
+	}
+
+
+
+	private void applyMovementLean(AbstractClientPlayer entity) {
+		LeanState state = leanStates.computeIfAbsent(entity,e -> new LeanState());
+
+		Vec3 movement = entity.getDeltaMovement();
+		movement = new Vec3(movement.x, 0.0, movement.z);
+		double speed = movement.length();
+		float targetForwardLean = 0.0F;
+		float targetSideLean = 0.0F;
+
+		if (speed > 0.001) {
+			Vec3 direction = movement.normalize();
+			float yaw = entity.getYRot() * Mth.DEG_TO_RAD;
+			Vec3 forward = new Vec3(-Mth.sin(yaw), 0.0, Mth.cos(yaw));
+			Vec3 right = new Vec3(Mth.cos(yaw), 0.0, Mth.sin(yaw));
+			float forwardAmount = (float) direction.dot(forward);
+			float sideAmount = (float) direction.dot(right);
+			float movementStrength = Mth.clamp((float) speed * 5.0F, 0.0F, 1.0F);
+			float maxForwardLean = 12.0F * Mth.DEG_TO_RAD;
+			float maxSideLean = 25.0F * Mth.DEG_TO_RAD;
+
+			targetForwardLean = forwardAmount * movementStrength * maxForwardLean;
+			targetSideLean = sideAmount * movementStrength * maxSideLean;
+		}
+		// Tween toward target
+		float smoothing = 0.15F;
+
+		state.forwardLean = Mth.lerp(smoothing, state.forwardLean, targetForwardLean);
+		state.sideLean = Mth.lerp(smoothing, state.sideLean, targetSideLean);
+
+		root.zRot += state.sideLean;
+		body.xRot += state.forwardLean;
+		body.zRot -= state.sideLean*1.5f;
+		head.xRot += state.forwardLean/1.5f;
 	}
 
 	public float reverseWalkSwing(AnimationDefinition animation, float limbSwing, float animationSpeed) {
@@ -510,16 +513,36 @@ public class PonyModel<T extends AbstractClientPlayer> extends HierarchicalModel
 	}
 
 	private void applyHeldItemPose(AbstractClientPlayer entity) {
-		if (entity.getOffhandItem().isEmpty()) {
+		if (entity.getOffhandItem().isEmpty() && entity.getMainHandItem().isEmpty()) {
 			return;
 		}
 		HumanoidArm offArm = entity.getMainArm() == HumanoidArm.RIGHT ? HumanoidArm.LEFT : HumanoidArm.RIGHT;
-
 		ModelPart arm = offArm == HumanoidArm.LEFT ? leftArm : rightArm;
-		arm.xRot += (float) Math.toRadians(-7.5);
-		arm.zRot += (float) Math.toRadians(offArm == HumanoidArm.LEFT ? -5 : 5);
-		arm.z -= 2;
-		arm.x -= 1;
+		HumanoidArm mainArm = entity.getMainArm() == HumanoidArm.RIGHT ? HumanoidArm.RIGHT : HumanoidArm.LEFT;
+		ModelPart arm2 = mainArm == HumanoidArm.LEFT ? leftArm : rightArm;
+		InteractionHand interactionHand = entity.getOffhandItem().getItem() instanceof ShieldItem ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+
+		if (entity.getItemInHand(interactionHand).getItem() instanceof ShieldItem shield) {
+			HumanoidArm shieldArmy = entity.getMainHandItem().getItem() == shield ? mainArm : offArm;
+			ModelPart shieldArm = entity.getMainHandItem().getItem() == shield ? arm2 : arm;
+			float armMult = shieldArmy == HumanoidArm.RIGHT ? 1f : -1f;
+			if (entity.getUseItem().getItem() instanceof ShieldItem && entity.isUsingItem()) {
+				shieldArm.yRot += -90f*armMult * Mth.DEG_TO_RAD;
+				shieldArm.y -= 2;
+			}
+			shieldArm.xRot += (float) Math.toRadians(-7.5);
+			shieldArm.zRot += (float) Math.toRadians(shieldArmy == HumanoidArm.LEFT ? -5 : 5);
+			shieldArm.z -= 2;
+			shieldArm.x -= shieldArmy == HumanoidArm.LEFT ? -1 : 1;
+		} else {
+			if (entity.getOffhandItem().isEmpty()) {
+				return;
+			}
+			arm.xRot += (float) Math.toRadians(-7.5);
+			arm.zRot += (float) Math.toRadians(offArm == HumanoidArm.LEFT ? -5 : 5);
+			arm.z -= 2;
+			arm.x -= offArm == HumanoidArm.LEFT ? -1 : 1;
+		}
 	}
 
 	private void switchHandState(int played,int ageInTicks) {
@@ -604,6 +627,49 @@ public class PonyModel<T extends AbstractClientPlayer> extends HierarchicalModel
 			HumanoidModel.ArmPose forgeArmPose = net.neoforged.neoforge.client.extensions.common.IClientItemExtensions.of(itemstack).getArmPose(player, hand, itemstack);
 			if (forgeArmPose != null) return forgeArmPose;
 			return HumanoidModel.ArmPose.ITEM;
+		}
+	}
+
+	private void itemPoses(AbstractClientPlayer entity, float ageInTicks) {
+		if (entity.swingingArm==InteractionHand.MAIN_HAND) {
+			switch (getArmPose(entity, entity.swingingArm)) {
+				case ITEM -> {
+					switchHandState(0, (int) ageInTicks);
+					armAnimation = PonyAnimation.item;
+				}
+				case BLOCK -> {
+					switchHandState(1, (int) ageInTicks);
+					armAnimation = PonyAnimation.block;
+				}
+				case BOW_AND_ARROW -> {
+					switchHandState(2, (int) ageInTicks);
+					armAnimation = PonyAnimation.bow;
+				}
+				case THROW_SPEAR -> {
+					switchHandState(3, (int) ageInTicks);
+					armAnimation = PonyAnimation.throw_spear;
+				}
+				case CROSSBOW_CHARGE -> {
+					switchHandState(4, (int) ageInTicks);
+					armAnimation = PonyAnimation.crossbow_charge;
+				}
+				case CROSSBOW_HOLD -> {
+					switchHandState(5, (int) ageInTicks);
+					armAnimation = PonyAnimation.crossbow_hold;
+				}
+				case SPYGLASS -> {
+					switchHandState(6, (int) ageInTicks);
+					armAnimation = PonyAnimation.spyglass;
+				}
+				case TOOT_HORN -> {
+					switchHandState(7, (int) ageInTicks);
+					armAnimation = PonyAnimation.toot_horn;
+				}
+				case BRUSH -> {
+					switchHandState(8, (int) ageInTicks);
+					armAnimation = PonyAnimation.brush;
+				}
+			}
 		}
 	}
 

@@ -27,7 +27,7 @@ public class CutieMarkManager {
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 if (image.getPixelRGBA(x, y) == marker) {
-                    image.setPixelRGBA(x, y, newColor(mark,progressX,progressY,player.getData(PonyAttachments.PONY_DATA).coatColor()));
+                    image.setPixelRGBA(x, y, newColor(mark,progressX,progressY,player.getData(PonyAttachments.APPEARANCE_DATA).coatColor()));
                     if (progressX>=3) {
                         progressX = 0;
                         if (progressY>=3) {
@@ -39,7 +39,7 @@ public class CutieMarkManager {
                         progressX++;
                     }
                 } else if (image.getPixelRGBA(x, y) == markerM) {
-                    image.setPixelRGBA(x, y, newColor(mark,progressMX,progressMY,player.getData(PonyAttachments.PONY_DATA).coatColor()));
+                    image.setPixelRGBA(x, y, newColor(mark,progressMX,progressMY,player.getData(PonyAttachments.APPEARANCE_DATA).coatColor()));
                     if (progressMX<=0) {
                         progressMX = 3;
                         if (progressMY>=3) {
@@ -77,13 +77,11 @@ public class CutieMarkManager {
 
     public static void changeCutieMark(Player player, PonyData.CUTIE_MARKS newMark) {
         PonyData data = player.getData(PonyAttachments.PONY_DATA);
-        PacketDistributor.sendToServer(new PonyDataPayload(new PonyData(data.race(),newMark,data.maneStyle(), data.coatColor(),
-                data.maneColor(), data.eyeColor(), data.discoveredCM())));
+        PacketDistributor.sendToServer(new PonyDataPayload(new PonyData(data.race(),newMark, data.discoveredCM())));
     }
 
     public static void discoverCutieMarkServer(Player player, boolean discovery) {
         PonyData data = player.getData(PonyAttachments.PONY_DATA);
-        player.setData(PonyAttachments.PONY_DATA, new PonyData(data.race(),data.cutieMark(), data.maneStyle(), data.coatColor(),
-                data.maneColor(), data.eyeColor(), discovery));
+        player.setData(PonyAttachments.PONY_DATA, new PonyData(data.race(),data.cutieMark(), discovery));
     }
 }

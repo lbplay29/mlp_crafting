@@ -1,9 +1,10 @@
-package net.ona.mlpfrien.magic;
+package net.ona.mlpfrien.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.ona.mlpfrien.magic.UnicornSpell;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.Optional;
 
 public record UnicornData(List<UnicornSpell> spells, List<Optional<UnicornSpell>> equippedSpells, int spellSlots, float mana, float max_mana, int level) {
     public static UnicornData defaultData() {
-        return new UnicornData(List.of(),List.of(),2,50,50,1);
+        return new UnicornData(List.of(),List.of(),2,75,75,1);
     }
     public UnicornData {
         spells = List.copyOf(spells);
@@ -40,7 +41,7 @@ public record UnicornData(List<UnicornSpell> spells, List<Optional<UnicornSpell>
                             Codec.INT.fieldOf("spellSlots").forGetter(UnicornData::spellSlots),
                             Codec.FLOAT.fieldOf("mana").forGetter(UnicornData::mana),
                             Codec.FLOAT.fieldOf("max_mana").forGetter(UnicornData::max_mana),
-                            Codec.INT.fieldOf("level").forGetter(UnicornData::level)).apply(instance, UnicornData::new));
+                            Codec.INT.fieldOf("skillXp").forGetter(UnicornData::level)).apply(instance, UnicornData::new));
     public static final StreamCodec<RegistryFriendlyByteBuf, UnicornData> STREAM_CODEC =
             StreamCodec.of(
                     (buf, data) -> {

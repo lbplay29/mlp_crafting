@@ -49,5 +49,17 @@ public class PonyNetworking {
                 EquipSpellPayload.STREAM_CODEC,
                 ServerPayloadHandler::handleEquipSpell
         );
+
+        registrar.playToServer(
+                AppearanceDataPayload.TYPE,
+                AppearanceDataPayload.STREAM_CODEC,
+                ServerPayloadHandler::handleAppearanceData
+        );
+
+        registrar.playToServer(
+                UnlockSkillPayload.TYPE,
+                UnlockSkillPayload.STREAM_CODEC,
+                ServerPayloadHandler::handleUnlockSkill
+        );
     }
 }

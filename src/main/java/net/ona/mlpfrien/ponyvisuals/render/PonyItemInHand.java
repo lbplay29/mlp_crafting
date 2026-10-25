@@ -2,11 +2,15 @@ package net.ona.mlpfrien.ponyvisuals.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
@@ -31,14 +35,21 @@ public class PonyItemInHand<T extends AbstractClientPlayer, M extends PonyModel<
             T livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
         ItemStack mainHand = livingEntity.getMainHandItem();
         ItemStack offHand = livingEntity.getOffhandItem();
+        HumanoidArm offArm = livingEntity.getMainArm() == HumanoidArm.RIGHT ? HumanoidArm.LEFT : HumanoidArm.RIGHT;
 
         if (!mainHand.isEmpty()) {
-            renderMainHandItem(livingEntity, mainHand, poseStack, buffer, packedLight);
+            if (mainHand.getItem() instanceof ShieldItem) {
+                renderShield(livingEntity,mainHand,offArm.getOpposite(),poseStack,buffer,packedLight);
+            } else {
+                renderMainHandItem(livingEntity, mainHand, poseStack, buffer, packedLight);
+            }
         }
-
         if (!offHand.isEmpty()) {
-            HumanoidArm offArm = livingEntity.getMainArm() == HumanoidArm.RIGHT ? HumanoidArm.LEFT : HumanoidArm.RIGHT;
-            renderOffhandItem(livingEntity, offHand, offArm, poseStack, buffer, packedLight);
+            if (offHand.getItem() instanceof ShieldItem) {
+                renderShield(livingEntity,offHand,offArm,poseStack,buffer,packedLight);
+            } else {
+                renderOffhandItem(livingEntity, offHand, offArm, poseStack, buffer, packedLight);
+            }
         }
     }
 
@@ -75,6 +86,41 @@ public class PonyItemInHand<T extends AbstractClientPlayer, M extends PonyModel<
         poseStack.popPose();
     }
 
+    private void renderShield(T livingEntity, ItemStack stack,HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        poseStack.pushPose();
+        PonyData data = livingEntity.getData(PonyAttachments.PONY_DATA);
+        getParentModel().root.translateAndRotate(poseStack);
+        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+        boolean leftHand = arm == HumanoidArm.LEFT;
+        float side_mult = leftHand ? 0 : 1;
+
+        if (data.race().canUseMagic()) {
+            getParentModel().heldItemU.translateAndRotate(poseStack);
+            poseStack.mulPose(Axis.YP.rotationDegrees(-90F));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+            poseStack.translate(0.4F, 0.2F, 0F);
+            if (livingEntity.isUsingItem() && livingEntity.getUseItem()==stack) {
+                poseStack.translate(-0.2F, -0.2F, 0F);
+            }
+        } else {
+            if (arm == HumanoidArm.LEFT) {
+                getParentModel().leftArm.translateAndRotate(poseStack);
+            } else {
+                getParentModel().rightArm.translateAndRotate(poseStack);
+            }
+            poseStack.mulPose(Axis.YP.rotationDegrees(180.0F*side_mult));
+            poseStack.mulPose(Axis.XP.rotationDegrees(90F));
+            poseStack.translate(0F, 0.3F+(leftHand ? -0.4 : 0), 0.1F);
+            if (livingEntity.isUsingItem() && livingEntity.getUseItem()==stack) {
+                poseStack.mulPose(Axis.XP.rotationDegrees(-90F));
+                poseStack.translate(0.2F, 0.1F, leftHand ? -0.2 : -0.5);
+            }
+        }
+        ItemDisplayContext displayContext = leftHand ? ItemDisplayContext.THIRD_PERSON_LEFT_HAND : ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
+        itemRenderer.renderStatic(stack, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, packedLight, OverlayTexture.NO_OVERLAY, poseStack, buffer, livingEntity.level(), livingEntity.getId());
+        poseStack.popPose();
+    }
+
 
     private void itemTypeMatch(ItemStack stack, PoseStack poseStack) {
         getParentModel().head.translateAndRotate(poseStack);
@@ -91,11 +137,11 @@ public class PonyItemInHand<T extends AbstractClientPlayer, M extends PonyModel<
         } else if (stack.getItem() instanceof PotionItem || stack.getItem() instanceof BottleItem){
             poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
             poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-            poseStack.translate(0,-0.4,0);
+            poseStack.translate(0,-0.4,-0.05);
         } else if (stack.getItem() instanceof TridentItem) {
             poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
             poseStack.mulPose(Axis.XP.rotationDegrees(-30.0F));
-            poseStack.translate(0,0,-0.2);
+            poseStack.translate(0,0,-0.125);
         } else if (stack.getItem() instanceof CrossbowItem) {
             //poseStack.translate(-0.2,-0.2,0.5);
         } else if (stack.getItem() instanceof BowItem) {

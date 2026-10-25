@@ -3,6 +3,7 @@ package net.ona.mlpfrien.init;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -23,6 +24,8 @@ public class PonyItems {
             .saturationModifier(0.2f).nutrition(4).build())));
     public static final DeferredItem<Item> SOUR_APPLE = ITEMS.register("sour_apple",()-> new Item(new Item.Properties().food(new FoodProperties.Builder()
             .saturationModifier(0.2f).nutrition(4).build())));
+
+    public static final DeferredItem<Item> CRUSADER_EMBLEM = ITEMS.register("crusader_emblem", ()-> new Item(new Item.Properties().rarity(Rarity.EPIC)));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

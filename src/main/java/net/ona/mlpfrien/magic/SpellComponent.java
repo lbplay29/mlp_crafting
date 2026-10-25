@@ -26,9 +26,9 @@ public enum SpellComponent {
                 target.hurt(context.getCaster().damageSources().magic(), 4.0F*(2*context.getPower()));
             }
 //            else {
-//                BlockState block = context.getCaster().level().getBlockState(BlockPos.containing(context.getBlockTarget()));
+//                BlockState block = context.getCaster().skillXp().getBlockState(BlockPos.containing(context.getBlockTarget()));
 //                if (block.is(BlockTags.SCULK_REPLACEABLE)) {
-//                    context.getCaster().level().removeBlock(BlockPos.containing(context.getBlockTarget()),false);
+//                    context.getCaster().skillXp().removeBlock(BlockPos.containing(context.getBlockTarget()),false);
 //                }
 //            }
         }

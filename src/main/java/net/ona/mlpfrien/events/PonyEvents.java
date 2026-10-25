@@ -2,24 +2,27 @@ package net.ona.mlpfrien.events;
 
 import net.minecraft.commands.Commands;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.BlockTags;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDestroyBlockEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
-import net.ona.mlpfrien.data.PonyAttachments;
-import net.ona.mlpfrien.data.PonyData;
+import net.ona.mlpfrien.data.*;
 import net.ona.mlpfrien.init.PonyTriggers;
 import net.ona.mlpfrien.magic.DelayedSpellManager;
 import net.ona.mlpfrien.magic.SpellCaster;
-import net.ona.mlpfrien.magic.UnicornData;
+import net.ona.mlpfrien.util.PonyAttributeManager;
 
 @EventBusSubscriber(modid = MyLittlePonyCraftingFriends.MODID)
 public class PonyEvents {
@@ -47,17 +50,13 @@ public class PonyEvents {
 
     @SubscribeEvent
     public static void registerCommands(RegisterCommandsEvent event) {
-        event.getDispatcher().register(Commands.literal("mlp").then(Commands.literal("data").then(Commands.literal("reset")
-                                .executes(context -> {
+        event.getDispatcher().register(Commands.literal("mlp").then(Commands.literal("data").then(Commands.literal("reset").executes(context -> {
                                     ServerPlayer player = context.getSource().getPlayerOrException();
-
                                     player.setData(PonyAttachments.PONY_DATA, PonyData.defaultData());
                                     player.setData(PonyAttachments.UNICORN_DATA, UnicornData.defaultData());
-
-                                    return 1;})
-                                )
-                        )
-        );
+                                    player.setData(PonyAttachments.APPEARANCE_DATA, AppearanceData.defaultData());
+                                    player.setData(PonyAttachments.LEVEL_DATA, LevelData.defaultData());
+                                    return 1;}))));
     }
 
     @SubscribeEvent
@@ -97,9 +96,27 @@ public class PonyEvents {
         }
     }
 
+    @SubscribeEvent
+    public static void playerExp(PlayerXpEvent.PickupXp event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {return;}
+        LevelData data = player.getData(PonyAttachments.LEVEL_DATA);
+        if (data.skillXp()>=100) {
+            player.setData(PonyAttachments.LEVEL_DATA,new LevelData(data.skills(), data.skillPoints()+2, 0));
+            player.playNotifySound(SoundEvents.BEACON_ACTIVATE, SoundSource.MASTER, 10f, 1f);
+            player.displayClientMessage(Component.literal("Level up! +2 Skill points"),true);
+        } else {
+            player.setData(PonyAttachments.LEVEL_DATA,new LevelData(data.skills(), data.skillPoints(), data.skillXp()+event.getOrb().getValue()));
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {return;}
+        PonyAttributeManager.applyModifiers(player.getData(PonyAttachments.PONY_DATA),player);
+    }
+
     public static void discoverMark(PonyData data, ServerPlayer player) {
-        player.setData(PonyAttachments.PONY_DATA, new PonyData(data.race(),data.cutieMark(), data.maneStyle(), data.coatColor(),
-                data.maneColor(), data.eyeColor(), true));
+        player.setData(PonyAttachments.PONY_DATA, new PonyData(data.race(),data.cutieMark(), true));
         PonyTriggers.CUTIE_MARK_TRIGGER.get().trigger(player);
     }
 

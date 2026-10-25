@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.data.PonyAttachments;
+import net.ona.mlpfrien.data.UnicornData;
 
 public final class ManaHud {
 

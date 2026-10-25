@@ -20,7 +20,7 @@ public class LItemModelProvider extends ItemModelProvider {
         basicItem(PonyItems.CARAMEL_APPLE.get());
         basicItem(PonyItems.GREEN_APPLE.get());
         basicItem(PonyItems.SOUR_APPLE.get());
-
+        basicItem(PonyItems.CRUSADER_EMBLEM.get());
     }
 
     private void heldItem(DeferredItem<?> item) {

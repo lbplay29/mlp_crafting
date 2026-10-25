@@ -3,42 +3,35 @@ package net.ona.mlpfrien.network;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
-import net.ona.mlpfrien.data.PonyAttachments;
-import net.ona.mlpfrien.data.PonyData;
+import net.ona.mlpfrien.data.*;
+import net.ona.mlpfrien.data.skill.SkillManager;
+import net.ona.mlpfrien.data.skill.SkillNodes;
+import net.ona.mlpfrien.data.skill.SkillTrees;
+import net.ona.mlpfrien.gui.SkillTreeGUI;
 import net.ona.mlpfrien.magic.SpellCaster;
-import net.ona.mlpfrien.magic.UnicornData;
 import net.ona.mlpfrien.magic.UnicornSpell;
-import net.ona.mlpfrien.magic.UnicornSpells;
+import net.ona.mlpfrien.util.PonyAttributeManager;
 
 import java.util.*;
 
 public class ServerPayloadHandler {
-    public static void applyRaceModifiers(PonyData data, Player player){
-        for (PonyData.RACES race : PonyData.RACES.values()) {
-            List<PonyData.RaceModifiers> modifiers = race.getRaceModifiers();
-            for (PonyData.RaceModifiers modifier : modifiers) {
-                Objects.requireNonNull(player.getAttribute(modifier.attribute())).removeModifier(modifier.id());
-            }
-        }
-        List<PonyData.RaceModifiers> modifiers = data.race().getRaceModifiers();
-        for (PonyData.RaceModifiers modifier : modifiers) {
-            Objects.requireNonNull(player.getAttribute(modifier.attribute()))
-                    .addPermanentModifier(new AttributeModifier(modifier.id(), modifier.amount(), modifier.operation()));
-        }
-    }
-
     public static void handlePonyData(PonyDataPayload payload, IPayloadContext context) {
         if (!(context.player() instanceof ServerPlayer player)) {
             return;
         }
         PonyData newData = payload.data();
-        applyRaceModifiers(newData,player);
+        PonyAttributeManager.applyModifiers(newData,player);
         player.setData(PonyAttachments.PONY_DATA, newData);
+    }
+
+    public static void handleAppearanceData(AppearanceDataPayload payload, IPayloadContext context) {
+        if (!(context.player() instanceof ServerPlayer player)) {
+            return;
+        }
+        AppearanceData newData = payload.data();
+        player.setData(PonyAttachments.APPEARANCE_DATA, newData);
     }
 
     public static void handlePegasusFlight(PegasusFlightPayload payload, IPayloadContext context) {
@@ -161,10 +154,28 @@ public class ServerPayloadHandler {
         List<Optional<UnicornSpell>> equipped = new ArrayList<>(data.equippedSpells());
         equipped.set(payload.slot(), Optional.of(spell));
 
-        MyLittlePonyCraftingFriends.LOGGER.info("SERVER EQUIP: slot=" + payload.slot()
-                + " spell=" + payload.spellIndex());
+        MyLittlePonyCraftingFriends.LOGGER.info("SERVER EQUIP: slot=" + payload.slot() + " spell=" + payload.spellIndex());
 
-        player.setData(PonyAttachments.UNICORN_DATA,
-                new UnicornData(data.spells(), List.copyOf(equipped), data.spellSlots(), data.mana(), data.max_mana(), data.level()));
+        player.setData(PonyAttachments.UNICORN_DATA, new UnicornData(data.spells(), List.copyOf(equipped), data.spellSlots(), data.mana(), data.max_mana(), data.level()));
+    }
+
+    public static void handleUnlockSkill(UnlockSkillPayload payload, IPayloadContext context) {
+        if (!(context.player() instanceof ServerPlayer player)) {
+            return;
+        }
+        SkillNodes.SkillNode node = SkillNodes.get(payload.node());
+        SkillTrees.SkillTree tree = SkillTrees.getTreeForNode(node.id());
+
+        PonyData pony = player.getData(PonyAttachments.PONY_DATA);
+
+        LevelData data = player.getData(PonyAttachments.LEVEL_DATA);
+        if (tree == null || !tree.isAvailable(pony) || SkillManager.getState(node, data) != SkillTreeGUI.SkillNodeState.AVAILABLE) {
+            return;
+        }
+        Set<ResourceLocation> unlocked = new HashSet<>(data.skills());
+        unlocked.add(node.skill());
+        player.setData(PonyAttachments.LEVEL_DATA, new LevelData(Set.copyOf(unlocked), data.skillPoints() - node.cost(),data.skillXp()));
+
+        PonyAttributeManager.applyModifiers(pony,player);
     }
 }
