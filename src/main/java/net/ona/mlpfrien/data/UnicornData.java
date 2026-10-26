@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public record UnicornData(List<UnicornSpell> spells, List<Optional<UnicornSpell>> equippedSpells, int spellSlots, float mana, float max_mana, int level) {
+public record UnicornData(List<UnicornSpell> spells, List<Optional<UnicornSpell>> equippedSpells, int spellSlots, float mana, float max_mana, int level, boolean isCasting) {
     public static UnicornData defaultData() {
-        return new UnicornData(List.of(),List.of(),2,75,75,1);
+        return new UnicornData(List.of(),List.of(),2,75,75,1,false);
     }
     public UnicornData {
         spells = List.copyOf(spells);
@@ -41,7 +41,8 @@ public record UnicornData(List<UnicornSpell> spells, List<Optional<UnicornSpell>
                             Codec.INT.fieldOf("spellSlots").forGetter(UnicornData::spellSlots),
                             Codec.FLOAT.fieldOf("mana").forGetter(UnicornData::mana),
                             Codec.FLOAT.fieldOf("max_mana").forGetter(UnicornData::max_mana),
-                            Codec.INT.fieldOf("skillXp").forGetter(UnicornData::level)).apply(instance, UnicornData::new));
+                            Codec.INT.fieldOf("skillXp").forGetter(UnicornData::level),
+                            Codec.BOOL.fieldOf("casting").forGetter(UnicornData::isCasting)).apply(instance, UnicornData::new));
     public static final StreamCodec<RegistryFriendlyByteBuf, UnicornData> STREAM_CODEC =
             StreamCodec.of(
                     (buf, data) -> {
@@ -62,6 +63,7 @@ public record UnicornData(List<UnicornSpell> spells, List<Optional<UnicornSpell>
                         buf.writeFloat(data.mana);
                         buf.writeFloat(data.max_mana);
                         buf.writeVarInt(data.level);
+                        buf.writeBoolean(data.isCasting);
                     },
 
                     buf -> {
@@ -86,8 +88,9 @@ public record UnicornData(List<UnicornSpell> spells, List<Optional<UnicornSpell>
                         float mana = buf.readFloat();
                         float max_mana = buf.readFloat();
                         int level = buf.readVarInt();
+                        boolean casting = buf.readBoolean();
 
-                        return new UnicornData(List.copyOf(spells),List.copyOf(equipped),spellSlots,mana,max_mana,level);
+                        return new UnicornData(List.copyOf(spells),List.copyOf(equipped),spellSlots,mana,max_mana,level,casting);
                     }
             );
 }

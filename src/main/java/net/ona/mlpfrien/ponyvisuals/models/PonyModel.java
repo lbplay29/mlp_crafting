@@ -12,6 +12,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -40,7 +41,6 @@ import java.util.WeakHashMap;
 public class PonyModel<T extends AbstractClientPlayer> extends HierarchicalModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID, "pony"), "main");
-	private static final Vector3f ANIMATION_VECTOR_CACHE = new Vector3f();
 	public final ModelPart root;
 	public final ModelPart head;
 	public final ModelPart Horn;
@@ -71,6 +71,7 @@ public class PonyModel<T extends AbstractClientPlayer> extends HierarchicalModel
 	public final ModelPart heldItemU;
 
 	public PonyModel(ModelPart root) {
+		super(RenderType::entityTranslucent);
 		this.root = root.getChild("root");
 		this.head = this.root.getChild("head");
 		this.Horn = this.head.getChild("Horn");
@@ -124,8 +125,8 @@ public class PonyModel<T extends AbstractClientPlayer> extends HierarchicalModel
 
 		PartDefinition HornOverlay = Horn.addOrReplaceChild("HornOverlay", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-		PartDefinition cube_r2 = HornOverlay.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(64, 34).addBox(-0.5F, -5.0F, -0.5F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.1F))
-				.texOffs(118, 2).addBox(-1.0F, -3.0F, -1.0F, 2.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -26.0F, -12.25F, 0.5236F, 0.0F, 0.0F));
+		PartDefinition cube_r2 = HornOverlay.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(64, 34).addBox(-0.5F, -5.0F, -0.5F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.5F))
+				.texOffs(118, 2).addBox(-1.0F, -3.0F, -1.0F, 2.0F, 3.0F, 2.0F, new CubeDeformation(0.5F)), PartPose.offsetAndRotation(0.0F, -26.0F, -12.25F, 0.5236F, 0.0F, 0.0F));
 
 		PartDefinition hairs = head.addOrReplaceChild("hairs", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
@@ -422,6 +423,7 @@ public class PonyModel<T extends AbstractClientPlayer> extends HierarchicalModel
 		}else if (data.race()== PonyData.RACES.UNICORN) {
 			this.wings.visible = false;
 			this.Horn.visible = true;
+			hornLogic(entity);
 		}
 		for (int i=0;i<this.maneStyles;i++) {
 			this.hairs.getChild("hair_"+i).visible= dataA.maneStyle() == i;
@@ -462,7 +464,9 @@ public class PonyModel<T extends AbstractClientPlayer> extends HierarchicalModel
 		applyHeldItemPose(entity);
 	}
 
-
+	private void hornLogic(AbstractClientPlayer player) {
+		HornOverlay.visible=!player.getMainHandItem().isEmpty() || player.getData(PonyAttachments.UNICORN_DATA).isCasting();
+	}
 
 	private void applyMovementLean(AbstractClientPlayer entity) {
 		LeanState state = leanStates.computeIfAbsent(entity,e -> new LeanState());

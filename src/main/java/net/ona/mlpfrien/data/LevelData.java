@@ -13,17 +13,13 @@ public record LevelData(Set<ResourceLocation> skills, int skillPoints, int skill
         return new LevelData(Set.of(),0,0);
     }
 
-    public boolean hasSkill(ResourceLocation skill) {
-        return skills.contains(skill);
-    }
-
     public LevelData {
         skills = Set.copyOf(skills);
     }
 
     public static final Codec<LevelData> CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
-                    ResourceLocation.CODEC.listOf().xmap(set -> Set.copyOf(set), list -> List.copyOf(list)).fieldOf("skills")
+                    ResourceLocation.CODEC.listOf().xmap(Set::copyOf, List::copyOf).fieldOf("skills")
                             .forGetter(LevelData::skills),
                     Codec.INT.fieldOf("skill_points").forGetter(LevelData::skillPoints),
                     Codec.INT.fieldOf("skillXp").forGetter(LevelData::skillXp)

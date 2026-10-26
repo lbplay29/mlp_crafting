@@ -25,14 +25,13 @@ public record PonyData(RACES race,CUTIE_MARKS cutieMark, boolean discoveredCM) {
     }
 
     public enum RACES {
-        EARTH(false,true,List.of(new AttModifiers(Attributes.ARMOR,ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"earth_armor")
-                ,5, AttributeModifier.Operation.ADD_VALUE,null),new AttModifiers(Attributes.ATTACK_DAMAGE,ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"earth_dmg")
-                ,2.5, AttributeModifier.Operation.ADD_VALUE,null),new AttModifiers(Attributes.MAX_HEALTH,ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"earth_health")
+        EARTH(false,false,List.of(new AttModifiers(Attributes.ARMOR,ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"earth_armor")
+                ,5, AttributeModifier.Operation.ADD_VALUE,null),new AttModifiers(Attributes.MAX_HEALTH,ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"earth_health")
                 ,10, AttributeModifier.Operation.ADD_VALUE,null))),
         UNICORN(true,false,List.of(new AttModifiers(Attributes.ATTACK_DAMAGE,ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"uni_damage")
                 ,-0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE,null),new AttModifiers(Attributes.MAX_HEALTH,ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"uni_health")
                 ,-4, AttributeModifier.Operation.ADD_VALUE,null))),
-        PEGASUS(false,true,List.of(new AttModifiers(Attributes.MOVEMENT_SPEED,ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"peg_damage")
+        PEGASUS(false,true,List.of(new AttModifiers(Attributes.MOVEMENT_SPEED,ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"peg_speed")
                 ,0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE,null),new AttModifiers(Attributes.MAX_HEALTH,ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"peg_health")
                 ,-2, AttributeModifier.Operation.ADD_VALUE,null)));
 
@@ -57,7 +56,9 @@ public record PonyData(RACES race,CUTIE_MARKS cutieMark, boolean discoveredCM) {
         MINING(List.of(new AttModifiers(Attributes.BLOCK_BREAK_SPEED,ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"mining_break")
                 ,0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE,PonySkills.FAST_MINING.id()))),
         EXPLORING(List.of(new AttModifiers(Attributes.SAFE_FALL_DISTANCE,ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"exploring_fall")
-                ,10, AttributeModifier.Operation.ADD_VALUE,PonySkills.FALL_RESIST.id())));
+                ,10, AttributeModifier.Operation.ADD_VALUE,PonySkills.FALL_RESIST.id()),new AttModifiers(Attributes.MOVEMENT_SPEED,ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"exploring_fall")
+                ,0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE,PonySkills.HIGH_SPEED.id()),new AttModifiers(Attributes.JUMP_STRENGTH,ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,"exploring_fall")
+                ,0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE,PonySkills.HIGH_JUMP.id())));
 
         private final List<AttModifiers> cutieModifiers;
         CUTIE_MARKS(List<AttModifiers> raceModifiers) {

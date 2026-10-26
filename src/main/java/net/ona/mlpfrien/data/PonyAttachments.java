@@ -4,7 +4,9 @@ import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
+import net.ona.mlpfrien.data.skill.SkillStateData;
 
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class PonyAttachments {
@@ -29,5 +31,9 @@ public class PonyAttachments {
             .serialize(LevelData.CODEC)
             .sync(LevelData.STREAM_CODEC)
             .copyOnDeath()
+            .build());
+    public static final Supplier<AttachmentType<SkillStateData>> SKILL_STATE_DATA = ATTACHMENT_TYPES.register("skill_state_data",()-> AttachmentType.builder(SkillStateData::defaultData)
+            .serialize(SkillStateData.CODEC)
+            .sync(SkillStateData.STREAM_CODEC)
             .build());
 }

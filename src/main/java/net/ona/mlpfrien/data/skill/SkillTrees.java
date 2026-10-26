@@ -4,10 +4,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.ona.mlpfrien.data.PonyData;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static net.ona.mlpfrien.util.BasicUtilities.id;
@@ -52,4 +49,5 @@ public class SkillTrees {
     }
     public static SkillTree get(ResourceLocation id) {return SKILL_TREES.get(id);}
     public static Collection<SkillTree> getAll() {return SKILL_TREES.values();}
+    public static List<SkillTree> cutie_mark_tree = List.of(CM_BUILDING,CM_EXPLORING,CM_MINING);
 }

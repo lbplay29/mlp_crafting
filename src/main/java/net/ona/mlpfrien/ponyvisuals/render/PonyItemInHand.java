@@ -129,7 +129,7 @@ public class PonyItemInHand<T extends AbstractClientPlayer, M extends PonyModel<
             poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
             poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
             poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-            poseStack.translate(0,0.1,0);
+            poseStack.translate(0,0.1,-0.1);
         } else if (stack.getItem() instanceof BlockItem) {
             poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
             poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
@@ -145,7 +145,8 @@ public class PonyItemInHand<T extends AbstractClientPlayer, M extends PonyModel<
         } else if (stack.getItem() instanceof CrossbowItem) {
             //poseStack.translate(-0.2,-0.2,0.5);
         } else if (stack.getItem() instanceof BowItem) {
-            //poseStack.translate(-0.2,-0.2,0.5);
+            poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
+            poseStack.translate(0,0.1,-0.1);
         } else {
             poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
             poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));

@@ -5,6 +5,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.ona.mlpfrien.data.PonyAttachments;
 import net.ona.mlpfrien.data.PonyData;
+import net.ona.mlpfrien.data.skill.SkillManager;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,7 +30,7 @@ public class PonyAttributeManager {
             }
             List<PonyData.AttModifiers> modifiers2 = data.cutieMark().getCutieModifiers();
             for (PonyData.AttModifiers modifier : modifiers2) {
-                if (modifier.skill()==null || player.getData(PonyAttachments.LEVEL_DATA).hasSkill(modifier.skill())) {
+                if (modifier.skill()==null || SkillManager.hasSkill(player,modifier.skill())) {
                     Objects.requireNonNull(player.getAttribute(modifier.attribute())).addPermanentModifier(
                             new AttributeModifier(modifier.id(), modifier.amount(), modifier.operation()));
                 }

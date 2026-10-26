@@ -5,6 +5,7 @@ import net.ona.mlpfrien.init.PonyEntities;
 import net.ona.mlpfrien.init.PonyItems;
 import net.ona.mlpfrien.init.PonyTriggers;
 import net.ona.mlpfrien.network.PonyNetworking;
+import net.ona.mlpfrien.util.Config;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -45,7 +46,7 @@ public class MyLittlePonyCraftingFriends {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
-        LOGGER.info("{}{}", Config.MAGIC_NUMBER_INTRODUCTION.get(), Config.MAGIC_NUMBER.getAsInt());
+//        LOGGER.info("{}{}", Config.MAGIC_NUMBER_INTRODUCTION.get(), Config.MAGIC_NUMBER.getAsInt());
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {

@@ -68,7 +68,6 @@ public class CutieMarkManager {
         if (!data.discoveredCM()) {
             mark="blank";
         }
-        MyLittlePonyCraftingFriends.LOGGER.info("Cutie Mark"+data.cutieMark()+" Discovered CM"+data.discoveredCM());
         try (InputStream stream = Minecraft.getInstance().getResourceManager().open(ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,
                 "textures/entity/cutie_marks/"+mark+".png"))) {
             return NativeImage.read(stream);

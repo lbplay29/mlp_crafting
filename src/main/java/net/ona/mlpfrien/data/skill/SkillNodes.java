@@ -31,16 +31,16 @@ public class SkillNodes {
             PonySkills.REPLACING.id(), List.of(HIGH_RANGE.id()), List.of(EXTRA_BREAKING.id()), -50, 100, 4));
 
     public static final SkillNode FALL_RESIST = registerNode(new SkillNode(id("cutie_mark/exploring/fall_resist"),
-            PonySkills.FALL_RESIST.id(), List.of(ROOT_CM_E.id()), List.of(), 0, 50, 1));
+            PonySkills.FALL_RESIST.id(), List.of(ROOT_CM_E.id()), List.of(), 0, 50, 2));
     public static final SkillNode HIGH_JUMP = registerNode(new SkillNode(id("cutie_mark/exploring/high_jump"),
             PonySkills.HIGH_JUMP.id(), List.of(FALL_RESIST.id()), List.of(high_speed()), 50, 100, 4));
     public static final SkillNode HIGH_SPEED = registerNode(new SkillNode(high_speed(),
             PonySkills.HIGH_SPEED.id(), List.of(FALL_RESIST.id()), List.of(HIGH_JUMP.id()), -50, 100, 4));
 
     public static final SkillNode FAST_MINING = registerNode(new SkillNode(id("cutie_mark/mining/fast_mining"),
-            PonySkills.FAST_MINING.id(), List.of(ROOT_CM_M.id()), List.of(), 0, 50, 1));
+            PonySkills.FAST_MINING.id(), List.of(ROOT_CM_M.id()), List.of(), 0, 50, 2));
     public static final SkillNode HIGH_VISION = registerNode(new SkillNode(id("cutie_mark/mining/high_vision"),
-            PonySkills.HIGH_JUMP.id(), List.of(FAST_MINING.id()), List.of(extra_fortune()), 50, 100, 4));
+            PonySkills.HIGH_VISION.id(), List.of(FAST_MINING.id()), List.of(extra_fortune()), 50, 100, 4));
     public static final SkillNode EXTRA_FORTUNE = registerNode(new SkillNode(extra_fortune(),
             PonySkills.EXTRA_FORTUNE.id(), List.of(FAST_MINING.id()), List.of(HIGH_VISION.id()), -50, 100, 4));
 

@@ -26,8 +26,8 @@ public final class ManaHud {
 
         int barWidth = 138;
         int barHeight = 25;
-        int x = 8;
-        int y = guiGraphics.guiHeight() - barHeight - 8;
+        int x = 0;
+        int y = guiGraphics.guiHeight() - barHeight;
 
         guiGraphics.blit(MANA_BAR_EMPTY, x, y, 0, 0, barWidth, barHeight, barWidth, barHeight);
 

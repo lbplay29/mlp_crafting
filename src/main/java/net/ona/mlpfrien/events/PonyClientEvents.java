@@ -22,6 +22,7 @@ import net.ona.mlpfrien.network.PonyDataPayload;
 import net.ona.mlpfrien.network.SpellCastPayload;
 import net.ona.mlpfrien.gui.PonyCreatorGUI;
 import net.ona.mlpfrien.gui.PonyInfoGUI;
+import net.ona.mlpfrien.network.ToggleReplacingPayload;
 import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = MyLittlePonyCraftingFriends.MODID, value = Dist.CLIENT)
@@ -42,6 +43,11 @@ public class PonyClientEvents {
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_G,
             "key.categories.mlpfrien"
+    );public static final KeyMapping ABILITY_THREE = new KeyMapping(
+            "key.mlpfrien.skill_three",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_C,
+            "key.categories.mlpfrien"
     );
 
 
@@ -58,9 +64,10 @@ public class PonyClientEvents {
 
     @SubscribeEvent
     public static void register(RegisterKeyMappingsEvent event) {
-        event.register(ABILITY);
         event.register(CREATOR_MENU);
+        event.register(ABILITY);
         event.register(ABILITY_TWO);
+        event.register(ABILITY_THREE);
     }
 
     @SubscribeEvent
@@ -79,8 +86,11 @@ public class PonyClientEvents {
         } else if (ABILITY_TWO.consumeClick()) {
             PacketDistributor.sendToServer(new SpellCastPayload(1));
         }
+        if (ABILITY_THREE.consumeClick()) {
+            PacketDistributor.sendToServer(new ToggleReplacingPayload(player.getData(PonyAttachments.SKILL_STATE_DATA)));
+        }
         if (player.getData(PonyAttachments.PONY_DATA).race() == PonyData.RACES.PEGASUS) {
-            boolean jumpDown =Minecraft.getInstance().options.keyJump.isDown();
+            boolean jumpDown = ABILITY.isDown();
             if (player.verticalCollisionBelow) {
                 flightArmed = false;
             } else if (!jumpDown) {

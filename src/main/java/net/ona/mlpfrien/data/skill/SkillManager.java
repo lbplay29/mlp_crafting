@@ -1,7 +1,9 @@
 package net.ona.mlpfrien.data.skill;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.ona.mlpfrien.data.LevelData;
+import net.ona.mlpfrien.data.PonyAttachments;
 import net.ona.mlpfrien.gui.SkillTreeGUI;
 
 public final class SkillManager {
@@ -13,6 +15,10 @@ public final class SkillManager {
     public static boolean isNodeUnlocked(ResourceLocation nodeId, LevelData data) {
         SkillNodes.SkillNode node = SkillNodes.get(nodeId);
         return node != null && isNodeUnlocked(node, data);
+    }
+
+    public static boolean hasSkill(Player player, ResourceLocation skill) {
+        return player.getData(PonyAttachments.LEVEL_DATA).skills().contains(skill);
     }
 
 

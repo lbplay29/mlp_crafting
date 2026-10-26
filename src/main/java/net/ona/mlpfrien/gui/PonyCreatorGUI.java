@@ -48,6 +48,7 @@ public class PonyCreatorGUI extends Screen {
     private ColorPickerWidget eyePicker;
     private PAGES thisPage;
     private TextImageButton maneStyleButton;
+    private TextImageButton lastConfirm;
 
     @Override
     protected void init() {
@@ -126,9 +127,10 @@ public class PonyCreatorGUI extends Screen {
     private void buildPageThree() {
         clearWidgets();
 
-        this.addRenderableWidget(new TextImageButton(this.width / 2 +70, this.height / 2 + 80, 56, 29, CONFIRM_SPRITES, button -> {
+        lastConfirm = new TextImageButton(this.width / 2 +70, this.height / 2 + 80, 56, 29, CONFIRM_SPRITES, button -> {
             CutieMarkManager.discoverCutieMarkServer(player, false);
-            this.onClose();}, Component.literal("Confirm"), this.font));
+            this.onClose();}, Component.literal("Confirm"), this.font);
+        this.addRenderableWidget(lastConfirm);
         this.addRenderableWidget(new TextImageButton(this.width / 2 -175, this.height / 2 - 10, 86, 29, OPTION_SPRITES, button ->{
             CutieMarkManager.changeCutieMark(player, PonyData.CUTIE_MARKS.MINING);}, Component.literal("Mining"), this.font));
         this.addRenderableWidget(new TextImageButton(this.width / 2 -175, this.height / 2 + 25, 86, 29, OPTION_SPRITES, button ->{
@@ -139,9 +141,9 @@ public class PonyCreatorGUI extends Screen {
 
     private Component raceDescription() {
         return switch (selectedRace) {
-            case UNICORN -> Component.literal("Unicorn\n\nEquipped with a magical horn, casting spells to gain an edge over others.");
-            case PEGASUS -> Component.literal("Pegasus\n\nWith a light frame and powerful wings, soar through the skies.");
-            case EARTH -> Component.literal("Earth Pony\n\nBuilt sturdy and close to nature, surrounding plants even grow faster.");
+            case UNICORN -> Component.translatable("creator.unicorn.desc");
+            case PEGASUS -> Component.translatable("creator.pegasus.desc");
+            case EARTH -> Component.translatable("creator.earth.desc");
         };
     }
 
@@ -177,6 +179,19 @@ public class PonyCreatorGUI extends Screen {
                     textY += this.font.lineHeight;
                 }
             }
+            case MARK -> {
+                int textY = this.height/2-35;
+                int maxWidth = 140;
+
+                for (FormattedCharSequence line : this.font.split(Component.translatable("creator.mark.desc"), maxWidth)) {
+                    guiGraphics.drawString(this.font, line, this.width/2+75, textY, 0xFFFFFF,true);
+                    textY += this.font.lineHeight;
+                }
+            }
+        }
+
+        if (lastConfirm!=null) {
+            lastConfirm.active = !ponyData.cutieMark().equals(PonyData.CUTIE_MARKS.ERROR);
         }
 
         InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, this.width / 2 - 90 , this.height / 2 - 90, this.width / 2 + 90,

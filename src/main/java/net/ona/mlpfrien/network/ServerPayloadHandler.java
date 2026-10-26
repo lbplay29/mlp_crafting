@@ -6,9 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.data.*;
-import net.ona.mlpfrien.data.skill.SkillManager;
-import net.ona.mlpfrien.data.skill.SkillNodes;
-import net.ona.mlpfrien.data.skill.SkillTrees;
+import net.ona.mlpfrien.data.skill.*;
 import net.ona.mlpfrien.gui.SkillTreeGUI;
 import net.ona.mlpfrien.magic.SpellCaster;
 import net.ona.mlpfrien.magic.UnicornSpell;
@@ -18,26 +16,20 @@ import java.util.*;
 
 public class ServerPayloadHandler {
     public static void handlePonyData(PonyDataPayload payload, IPayloadContext context) {
-        if (!(context.player() instanceof ServerPlayer player)) {
-            return;
-        }
+        if (!(context.player() instanceof ServerPlayer player)) {return;}
         PonyData newData = payload.data();
         PonyAttributeManager.applyModifiers(newData,player);
         player.setData(PonyAttachments.PONY_DATA, newData);
     }
 
     public static void handleAppearanceData(AppearanceDataPayload payload, IPayloadContext context) {
-        if (!(context.player() instanceof ServerPlayer player)) {
-            return;
-        }
+        if (!(context.player() instanceof ServerPlayer player)) {return;}
         AppearanceData newData = payload.data();
         player.setData(PonyAttachments.APPEARANCE_DATA, newData);
     }
 
     public static void handlePegasusFlight(PegasusFlightPayload payload, IPayloadContext context) {
-        if (!(context.player() instanceof ServerPlayer player)) {
-            return;
-        }
+        if (!(context.player() instanceof ServerPlayer player)) {return;}
         if (!player.getData(PonyAttachments.PONY_DATA).race().canFly()||player.onGround()||player.isPassenger()) {
             return;
         }
@@ -51,9 +43,7 @@ public class ServerPayloadHandler {
     }
 
     public static void handleSpellCasting(SpellCastPayload payload, IPayloadContext context) {
-        if (!(context.player() instanceof ServerPlayer player)) {
-            return;
-        }
+        if (!(context.player() instanceof ServerPlayer player)) {return;}
         if (!player.getData(PonyAttachments.PONY_DATA).race().canUseMagic()) {
             return;
         }
@@ -72,21 +62,17 @@ public class ServerPayloadHandler {
     }
 
     public static void handleCreateSpell(CreateSpellPayload payload, IPayloadContext context) {
-        if (!(context.player() instanceof ServerPlayer player)) {
-            return;
-        }
+        if (!(context.player() instanceof ServerPlayer player)) {return;}
 
         UnicornData data = player.getData(PonyAttachments.UNICORN_DATA);
         List<UnicornSpell> spells = new ArrayList<>(data.spells());
         spells.add(payload.spell());
 
-        player.setData(PonyAttachments.UNICORN_DATA, new UnicornData(List.copyOf(spells), data.equippedSpells(), data.spellSlots(), data.mana(), data.max_mana(), data.level()));
+        player.setData(PonyAttachments.UNICORN_DATA, new UnicornData(List.copyOf(spells), data.equippedSpells(), data.spellSlots(), data.mana(), data.max_mana(), data.level(), data.isCasting()));
     }
 
     public static void handleReplaceSpell(ReplaceSpellPayload payload, IPayloadContext context) {
-        if (!(context.player() instanceof ServerPlayer player)) {
-            return;
-        }
+        if (!(context.player() instanceof ServerPlayer player)) {return;}
         UnicornData data = player.getData(PonyAttachments.UNICORN_DATA);
 
         if (payload.spellIndex() < 0 || payload.spellIndex() >= data.spells().size()) {
@@ -110,12 +96,10 @@ public class ServerPayloadHandler {
         }
 
         player.setData(PonyAttachments.UNICORN_DATA,
-                new UnicornData(List.copyOf(spells), List.copyOf(equipped), data.spellSlots(), data.mana(), data.max_mana(), data.level()));
+                new UnicornData(List.copyOf(spells), List.copyOf(equipped), data.spellSlots(), data.mana(), data.max_mana(), data.level(), data.isCasting()));
     }
     public static void handleRemoveSpell(RemoveSpellPayload payload, IPayloadContext context) {
-        if (!(context.player() instanceof ServerPlayer player)) {
-            return;
-        }
+        if (!(context.player() instanceof ServerPlayer player)) {return;}
         UnicornData data = player.getData(PonyAttachments.UNICORN_DATA);
 
         if (payload.spellIndex() < 0
@@ -135,12 +119,10 @@ public class ServerPayloadHandler {
         }
 
         player.setData(PonyAttachments.UNICORN_DATA,
-                new UnicornData(List.copyOf(spells), List.copyOf(equipped), data.spellSlots(), data.mana(), data.max_mana(), data.level()));
+                new UnicornData(List.copyOf(spells), List.copyOf(equipped), data.spellSlots(), data.mana(), data.max_mana(), data.level(), data.isCasting()));
     }
     public static void handleEquipSpell(EquipSpellPayload payload, IPayloadContext context) {
-        if (!(context.player() instanceof ServerPlayer player)) {
-            return;
-        }
+        if (!(context.player() instanceof ServerPlayer player)) {return;}
         UnicornData data = player.getData(PonyAttachments.UNICORN_DATA);
 
         if (payload.spellIndex() < 0 || payload.spellIndex() >= data.spells().size()) {
@@ -156,13 +138,11 @@ public class ServerPayloadHandler {
 
         MyLittlePonyCraftingFriends.LOGGER.info("SERVER EQUIP: slot=" + payload.slot() + " spell=" + payload.spellIndex());
 
-        player.setData(PonyAttachments.UNICORN_DATA, new UnicornData(data.spells(), List.copyOf(equipped), data.spellSlots(), data.mana(), data.max_mana(), data.level()));
+        player.setData(PonyAttachments.UNICORN_DATA, new UnicornData(data.spells(), List.copyOf(equipped), data.spellSlots(), data.mana(), data.max_mana(), data.level(), data.isCasting()));
     }
 
     public static void handleUnlockSkill(UnlockSkillPayload payload, IPayloadContext context) {
-        if (!(context.player() instanceof ServerPlayer player)) {
-            return;
-        }
+        if (!(context.player() instanceof ServerPlayer player)) {return;}
         SkillNodes.SkillNode node = SkillNodes.get(payload.node());
         SkillTrees.SkillTree tree = SkillTrees.getTreeForNode(node.id());
 
@@ -177,5 +157,24 @@ public class ServerPayloadHandler {
         player.setData(PonyAttachments.LEVEL_DATA, new LevelData(Set.copyOf(unlocked), data.skillPoints() - node.cost(),data.skillXp()));
 
         PonyAttributeManager.applyModifiers(pony,player);
+    }
+
+    public static void handleToggle(ToggleReplacingPayload payload,IPayloadContext context) {
+        if (!(context.player() instanceof ServerPlayer player)) {return;}
+
+        SkillStateData data = player.getData(PonyAttachments.SKILL_STATE_DATA);
+        Set<ResourceLocation> active = new HashSet<>(data.activeModes());
+        if (SkillManager.hasSkill(player, PonySkills.REPLACING.id())) {
+            if (!active.remove(PonySkills.REPLACING.id())) {
+                active.add(PonySkills.REPLACING.id());
+            }
+        } else if(SkillManager.hasSkill(player, PonySkills.HIGH_VISION.id())) {
+            if (!active.remove(PonySkills.HIGH_VISION.id())) {
+                active.add(PonySkills.HIGH_VISION.id());
+            }
+        } else {return;}
+        player.displayClientMessage(Component.literal("Toggled skill"),true);
+
+        player.setData(PonyAttachments.SKILL_STATE_DATA, new SkillStateData(Set.copyOf(active)));
     }
 }

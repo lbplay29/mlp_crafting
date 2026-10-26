@@ -61,5 +61,11 @@ public class PonyNetworking {
                 UnlockSkillPayload.STREAM_CODEC,
                 ServerPayloadHandler::handleUnlockSkill
         );
+
+        registrar.playToServer(
+                ToggleReplacingPayload.TYPE,
+                ToggleReplacingPayload.STREAM_CODEC,
+                ServerPayloadHandler::handleToggle
+        );
     }
 }

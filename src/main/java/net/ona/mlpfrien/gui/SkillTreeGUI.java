@@ -85,10 +85,8 @@ public class SkillTreeGUI extends Screen {
         if (skill == null) {
             return;
         }
-        int centerX = treeOriginX + node.x();
-        int centerY = treeOriginY + node.y();
-        int x = centerX - NODE_SIZE / 2;
-        int y = centerY - NODE_SIZE / 2;
+        int x = treeOriginX + node.x() - NODE_SIZE / 2;
+        int y = treeOriginY + node.y() - NODE_SIZE / 2;
 
         SkillNodeState state = SkillManager.getState(node, data);
 

@@ -5,9 +5,14 @@
   "item.mlpfrien.caramel_apple": "Caramel Apple",
   "item.mlpfrien.sour_apple": "Sweet Apple",
   "item.mlpfrien.green_apple": "Green Apple",
+  "item.mlpfrien.crusader_emblem": "Crusader Emblem",
 
   "advancements.story.cutie_mark.description": "Discover your special talent",
   "advancements.story.cutie_mark.title": "Mah Cutie Mark!",
+
+  "creator.unicorn.desc": "Unicorn\n\nEquipped with a magical horn, you can cast spells and craft your own, but you deal 25% less damage, and have 2 less hearts.",
+  "creator.pegasus.desc": "Pegasus\n\nWith a light frame and wings, you can glide (Racial Primary to gain height) and walk 25% faster, but you have 9 hearts instead of 10.",
+  "creator.earth.desc": "Earth Pony\n\nBuilt sturdy and close to nature, you have natural 5 points of armor, 5 extra hearts, and plants less than 120 blocks away grow faster.",
 
   "mlpfrien.configuration.title": "My Little Pony: Crafting Friends Configs",
   "mlpfrien.configuration.section.mlpfrien.common.toml": "My Little Pony: Crafting Friends Configs",
@@ -18,8 +23,9 @@
   "mlpfrien.configuration.magicNumber": "Magic Number",
   "key.mlpfrien.menu": "Charater Info Screen",
   "key.categories.mlpfrien": "My Little Pony: Crafting Friends",
-  "key.mlpfrien.skill": "Cast Spell",
-  "key.mlpfrien.skill_two": "Second Spell",
+  "key.mlpfrien.skill": "Primary Racial Skill",
+  "key.mlpfrien.skill_two": "Secondary Racial Skill",
+  "key.mlpfrien.skill_three": "Primary Common Skill",
   "skill.mlpfrien.root_cm": "Cutie Mark",
   "skill.mlpfrien.root_cm.description": "You finally found your Cutie Mark, and many abilities come from your talent",
   "skill.mlpfrien.high_range": "High Range",
@@ -27,5 +33,18 @@
   "skill.mlpfrien.fall_resist": "Resist Falling",
   "skill.mlpfrien.fall_resist.description": "You need to fall from 10 blocks higher to start taking fall damage",
   "skill.mlpfrien.fast_mining": "Fast Mining",
-  "skill.mlpfrien.fast_mining.description": "You mine blocks 25% faster"
+  "skill.mlpfrien.fast_mining.description": "You mine blocks 25% faster",
+  "skill.mlpfrien.replacing": "Block Replacing",
+  "skill.mlpfrien.replacing.description": "You can toggle replacing blocks instead of placing with the Primary Ability key",
+  "skill.mlpfrien.extra_breaking": "Easy Breaking",
+  "skill.mlpfrien.extra_breaking.description": "You can break any block that requires a stone tool or less with your hands or any block",
+  "skill.mlpfrien.high_speed": "High Speed",
+  "skill.mlpfrien.high_speed.description": "You're 25% faster on foot",
+  "skill.mlpfrien.high_jump": "High Jump",
+  "skill.mlpfrien.high_jump.description": "You jump 25% higher",
+  "skill.mlpfrien.extra_fortune": "Fortune",
+  "skill.mlpfrien.extra_fortune.description": "You get extra drops from blocks, stacks with enchantments",
+  "skill.mlpfrien.high_vision": "Dark Vision",
+  "skill.mlpfrien.high_vision.description": "You can see in the dark, toggleable with the Primary Ability key",
+  "creator.mark.desc": "What do you like to do most, out of these options, in Minecraft?"
 }
