@@ -1,6 +1,7 @@
 package net.ona.mlpfrien;
 
 import net.ona.mlpfrien.data.PonyAttachments;
+import net.ona.mlpfrien.init.PonyBlocks;
 import net.ona.mlpfrien.init.PonyEntities;
 import net.ona.mlpfrien.init.PonyItems;
 import net.ona.mlpfrien.init.PonyTriggers;
@@ -38,6 +39,7 @@ public class MyLittlePonyCraftingFriends {
 
         modEventBus.addListener(PonyNetworking::registerPayloads);
         PonyItems.register(modEventBus);
+        PonyBlocks.register(modEventBus);
         PonyEntities.ENTITY_TYPES.register(modEventBus);
         PonyTriggers.TRIGGERS.register(modEventBus);
 
@@ -55,6 +57,26 @@ public class MyLittlePonyCraftingFriends {
             event.accept(PonyItems.CARAMEL_APPLE);
             event.accept(PonyItems.SOUR_APPLE);
             event.accept(PonyItems.GREEN_APPLE);
+        }
+        if (event.getTabKey()== CreativeModeTabs.NATURAL_BLOCKS) {
+            event.accept(PonyBlocks.GOLDEN_LEAVES.asItem());
+            event.accept(PonyBlocks.GOLDEN_LOG.asItem());
+            event.accept(PonyBlocks.GOLDEN_SAPLING.asItem());
+        }
+        if (event.getTabKey()== CreativeModeTabs.BUILDING_BLOCKS) {
+            event.accept(PonyBlocks.GOLDEN_LOG.asItem());
+            event.accept(PonyBlocks.STRIPPED_GOLDEN_LOG.asItem());
+            event.accept(PonyBlocks.GOLDEN_WOOD.asItem());
+            event.accept(PonyBlocks.STRIPPED_GOLDEN_WOOD.asItem());
+            event.accept(PonyBlocks.GOLDEN_PLANKS.asItem());
+            event.accept(PonyBlocks.GOLDEN_BUTTON.asItem());
+            event.accept(PonyBlocks.GOLDEN_SLAB.asItem());
+            event.accept(PonyBlocks.GOLDEN_STAIRS.asItem());
+            event.accept(PonyBlocks.GOLDEN_PRESSURE_PlATE.asItem());
+            event.accept(PonyBlocks.GOLDEN_FENCE.asItem());
+            event.accept(PonyBlocks.GOLDEN_FENCE_GATE.asItem());
+            event.accept(PonyBlocks.GOLDEN_TRAPDOOR.asItem());
+            event.accept(PonyBlocks.GOLDEN_DOOR.asItem());
         }
     }
 

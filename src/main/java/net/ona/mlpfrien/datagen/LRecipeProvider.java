@@ -9,6 +9,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
+import net.ona.mlpfrien.init.PonyBlocks;
 import net.ona.mlpfrien.init.PonyItems;
 import net.ona.mlpfrien.init.PonyTags;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +34,9 @@ public class LRecipeProvider extends RecipeProvider implements IConditionBuilder
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PonyItems.CARAMEL_APPLE)
                 .requires(PonyTags.APPLES)
                 .requires(Items.SUGAR)
-                .unlockedBy("hay_burg",has(Items.APPLE)).save(recipeOutput);
+                .unlockedBy("cara_apel",has(Items.APPLE)).save(recipeOutput);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, PonyBlocks.GOLDEN_PLANKS.get(),4)
+                .requires(PonyBlocks.GOLDEN_LOG)
+                .unlockedBy("goldn_plks",has(Items.APPLE)).save(recipeOutput);
     }
 }

@@ -16,9 +16,9 @@ import java.util.concurrent.CompletableFuture;
 
 public class LDataPackProvider extends DatapackBuiltinEntriesProvider {
     private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
-            .add(Registries.CONFIGURED_FEATURE, PonyConfiguredFeatures::bootstrap)
-            .add(Registries.PLACED_FEATURE, PonyPlacedFeatures::bootstrap)
-            .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, PonyBiomeModifiers::bootstrap);
+            .add(Registries.CONFIGURED_FEATURE, PonyConfiguredFeatures::bootstrap);
+//            .add(Registries.PLACED_FEATURE, PonyPlacedFeatures::bootstrap)
+//            .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, PonyBiomeModifiers::bootstrap);
 
     public LDataPackProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries, BUILDER, Set.of(MyLittlePonyCraftingFriends.MODID));

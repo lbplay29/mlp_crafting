@@ -10,22 +10,23 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
+import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 
 import java.util.List;
 
 public class PonyPlacedFeatures {
-    public static final ResourceKey<PlacedFeature> ENCRUSTED_DEEPSLATE_PLACED_KEY = registerKey("encrusted_deepslate_placed");
+    public static final ResourceKey<PlacedFeature> GOLDEN_TREE_PLACED_KEY = registerKey("golden_tree_placed");
 
     public static void bootstrap(BootstrapContext<PlacedFeature> context) {
         var configuredFeat = context.lookup(Registries.CONFIGURED_FEATURE);
 
-        register(context, ENCRUSTED_DEEPSLATE_PLACED_KEY, configuredFeat.getOrThrow(PonyConfiguredFeatures.ENCRUSTED_DEEPSLATE_KEY),
+        register(context, GOLDEN_TREE_PLACED_KEY, configuredFeat.getOrThrow(PonyConfiguredFeatures.GOLDEN_TREE),
                 PonyOrePlacements.commonOrePlacement(3, HeightRangePlacement.triangle(VerticalAnchor.absolute(-80),VerticalAnchor.absolute(-15))));
 
     }
 
     public static ResourceKey<PlacedFeature> registerKey(String name) {
-        return ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath("bedrocked",name));
+        return ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,name));
     }
 
     private static void register(BootstrapContext<PlacedFeature> context, ResourceKey<PlacedFeature> key, Holder<ConfiguredFeature<?,?>> configuredFeat,

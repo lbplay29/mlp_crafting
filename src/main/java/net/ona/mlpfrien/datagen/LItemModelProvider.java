@@ -7,6 +7,7 @@ import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
+import net.ona.mlpfrien.init.PonyBlocks;
 import net.ona.mlpfrien.init.PonyItems;
 
 public class LItemModelProvider extends ItemModelProvider {
@@ -21,6 +22,16 @@ public class LItemModelProvider extends ItemModelProvider {
         basicItem(PonyItems.GREEN_APPLE.get());
         basicItem(PonyItems.SOUR_APPLE.get());
         basicItem(PonyItems.CRUSADER_EMBLEM.get());
+        basicItem(PonyBlocks.GOLDEN_SAPLING.asItem());
+        basicItem(PonyBlocks.GOLDEN_DOOR.asItem());
+        simpleBlockItem(PonyBlocks.GOLDEN_FENCE_GATE.get());
+        simpleBlockItem(PonyBlocks.GOLDEN_SLAB.get());
+        simpleBlockItem(PonyBlocks.GOLDEN_STAIRS.get());
+        simpleBlockItem(PonyBlocks.GOLDEN_PRESSURE_PlATE.get());
+        simpleBlockItem(PonyBlocks.GOLDEN_LOG.get());
+        simpleBlockItem(PonyBlocks.STRIPPED_GOLDEN_LOG.get());
+        simpleBlockItem(PonyBlocks.GOLDEN_WOOD.get());
+        simpleBlockItem(PonyBlocks.STRIPPED_GOLDEN_WOOD.get());
     }
 
     private void heldItem(DeferredItem<?> item) {

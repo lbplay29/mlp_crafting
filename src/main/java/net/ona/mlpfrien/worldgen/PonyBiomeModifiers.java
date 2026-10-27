@@ -21,7 +21,7 @@ public class PonyBiomeModifiers {
 
         context.register(ADD_ENCRUSTED_DEEPSLATE, new BiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
-                HolderSet.direct(placedFeatures.getOrThrow(PonyPlacedFeatures.ENCRUSTED_DEEPSLATE_PLACED_KEY)),
+                HolderSet.direct(placedFeatures.getOrThrow(PonyPlacedFeatures.GOLDEN_TREE_PLACED_KEY)),
                 GenerationStep.Decoration.UNDERGROUND_ORES
         ));
 

@@ -10,6 +10,7 @@ import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.internal.NeoForgeBlockTagsProvider;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
+import net.ona.mlpfrien.init.PonyBlocks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
@@ -21,9 +22,39 @@ public class LBlockTagProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        //tag(BlockTags.MINEABLE_WITH_PICKAXE)
-        //        .add(Blocks.REINFORCED_DEEPSLATE)
-       //         .add(Blocks.BEDROCK)
-        //        .add(Blocks.END_PORTAL_FRAME);
+        tag(BlockTags.LEAVES)
+                .add(PonyBlocks.GOLDEN_LEAVES.get());
+        tag(BlockTags.LOGS)
+                .add(PonyBlocks.GOLDEN_LOG.get());
+        tag(BlockTags.SAPLINGS)
+                .add(PonyBlocks.GOLDEN_SAPLING.get());
+        tag(BlockTags.FENCES)
+                .add(PonyBlocks.GOLDEN_FENCE.get());
+        tag(BlockTags.WOODEN_FENCES)
+                .add(PonyBlocks.GOLDEN_FENCE.get());
+        tag(BlockTags.FENCE_GATES)
+                .add(PonyBlocks.GOLDEN_FENCE_GATE.get());
+        tag(BlockTags.TRAPDOORS)
+                .add(PonyBlocks.GOLDEN_TRAPDOOR.get());
+        tag(BlockTags.WOODEN_TRAPDOORS)
+                .add(PonyBlocks.GOLDEN_TRAPDOOR.get());
+        tag(BlockTags.DOORS)
+                .add(PonyBlocks.GOLDEN_DOOR.get());
+        tag(BlockTags.WOODEN_DOORS)
+                .add(PonyBlocks.GOLDEN_DOOR.get());
+        tag(BlockTags.MINEABLE_WITH_AXE)
+                .add(PonyBlocks.GOLDEN_LOG.get())
+                .add(PonyBlocks.STRIPPED_GOLDEN_LOG.get())
+                .add(PonyBlocks.GOLDEN_PLANKS.get())
+                .add(PonyBlocks.GOLDEN_WOOD.get())
+                .add(PonyBlocks.STRIPPED_GOLDEN_WOOD.get())
+                .add(PonyBlocks.GOLDEN_SLAB.get())
+                .add(PonyBlocks.GOLDEN_STAIRS.get())
+                .add(PonyBlocks.GOLDEN_FENCE.get())
+                .add(PonyBlocks.GOLDEN_FENCE_GATE.get())
+                .add(PonyBlocks.GOLDEN_BUTTON.get())
+                .add(PonyBlocks.GOLDEN_PRESSURE_PlATE.get());
+        tag(BlockTags.MINEABLE_WITH_HOE)
+                .add(PonyBlocks.GOLDEN_LEAVES.get());
     }
 }
