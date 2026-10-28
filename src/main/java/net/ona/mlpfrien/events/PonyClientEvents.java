@@ -3,9 +3,11 @@ package net.ona.mlpfrien.events;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.FoliageColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -15,6 +17,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.data.PonyAttachments;
 import net.ona.mlpfrien.data.PonyData;
+import net.ona.mlpfrien.init.PonyBlocks;
 import net.ona.mlpfrien.init.PonyEntities;
 import net.ona.mlpfrien.magic.ManaHud;
 import net.ona.mlpfrien.network.PegasusFlightPayload;
@@ -117,5 +120,12 @@ public class PonyClientEvents {
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(PonyEntities.UNICORN_SPELL_PROJECTILE.get(), NoopRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
+        event.register((state, level, pos, tintIndex) -> {
+                    if (level != null && pos != null) {return BiomeColors.getAverageFoliageColor(level, pos);}return FoliageColor.getDefaultColor();},
+                PonyBlocks.APPLE_LEAVES.get());
     }
 }

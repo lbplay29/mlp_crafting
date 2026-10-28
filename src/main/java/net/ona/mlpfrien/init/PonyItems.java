@@ -24,6 +24,8 @@ public class PonyItems {
             .saturationModifier(0.2f).nutrition(4).build())));
     public static final DeferredItem<Item> SOUR_APPLE = ITEMS.register("sour_apple",()-> new Item(new Item.Properties().food(new FoodProperties.Builder()
             .saturationModifier(0.2f).nutrition(4).build())));
+    public static final DeferredItem<Item> ZAP_APPLE = ITEMS.register("zap_apple",()-> new Item(new Item.Properties().food(new FoodProperties.Builder()
+            .saturationModifier(1.5f).nutrition(6).build()).rarity(Rarity.EPIC)));
 
     public static final DeferredItem<Item> CRUSADER_EMBLEM = ITEMS.register("crusader_emblem", ()-> new Item(new Item.Properties().rarity(Rarity.EPIC)));
 

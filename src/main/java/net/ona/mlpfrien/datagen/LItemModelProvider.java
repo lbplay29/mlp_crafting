@@ -21,17 +21,34 @@ public class LItemModelProvider extends ItemModelProvider {
         basicItem(PonyItems.CARAMEL_APPLE.get());
         basicItem(PonyItems.GREEN_APPLE.get());
         basicItem(PonyItems.SOUR_APPLE.get());
+        basicItem(PonyItems.ZAP_APPLE.get());
         basicItem(PonyItems.CRUSADER_EMBLEM.get());
         basicItem(PonyBlocks.GOLDEN_SAPLING.asItem());
         basicItem(PonyBlocks.GOLDEN_DOOR.asItem());
         simpleBlockItem(PonyBlocks.GOLDEN_FENCE_GATE.get());
         simpleBlockItem(PonyBlocks.GOLDEN_SLAB.get());
+        simpleBlockItem(PonyBlocks.GOLDEN_LEAVES.get());
         simpleBlockItem(PonyBlocks.GOLDEN_STAIRS.get());
         simpleBlockItem(PonyBlocks.GOLDEN_PRESSURE_PlATE.get());
         simpleBlockItem(PonyBlocks.GOLDEN_LOG.get());
         simpleBlockItem(PonyBlocks.STRIPPED_GOLDEN_LOG.get());
         simpleBlockItem(PonyBlocks.GOLDEN_WOOD.get());
         simpleBlockItem(PonyBlocks.STRIPPED_GOLDEN_WOOD.get());
+
+        basicItem(PonyBlocks.ZAP_SAPLING.asItem());
+        basicItem(PonyBlocks.ZAP_DOOR.asItem());
+        simpleBlockItem(PonyBlocks.ZAP_FENCE_GATE.get());
+        simpleBlockItem(PonyBlocks.ZAP_SLAB.get());
+        simpleBlockItem(PonyBlocks.ZAP_LEAVES.get());
+        simpleBlockItem(PonyBlocks.ZAP_STAIRS.get());
+        simpleBlockItem(PonyBlocks.ZAP_PRESSURE_PlATE.get());
+        simpleBlockItem(PonyBlocks.ZAP_LOG.get());
+        simpleBlockItem(PonyBlocks.STRIPPED_ZAP_LOG.get());
+        simpleBlockItem(PonyBlocks.ZAP_WOOD.get());
+        simpleBlockItem(PonyBlocks.STRIPPED_ZAP_WOOD.get());
+        simpleBlockItem(PonyBlocks.ZAP_LEAVES.get());
+
+        simpleBlockItem(PonyBlocks.APPLE_LEAVES.get());
     }
 
     private void heldItem(DeferredItem<?> item) {

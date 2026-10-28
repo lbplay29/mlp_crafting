@@ -1,10 +1,11 @@
-package net.ona.mlpfrien.init;
+package net.ona.mlpfrien.block;
 
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.ItemAbility;
+import net.ona.mlpfrien.init.PonyBlocks;
 import org.jetbrains.annotations.Nullable;
 
 public class PonyLog extends RotatedPillarBlock {

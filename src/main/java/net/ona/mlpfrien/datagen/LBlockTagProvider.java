@@ -23,25 +23,35 @@ public class LBlockTagProvider extends BlockTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         tag(BlockTags.LEAVES)
-                .add(PonyBlocks.GOLDEN_LEAVES.get());
+                .add(PonyBlocks.GOLDEN_LEAVES.get())
+                .add(PonyBlocks.ZAP_LEAVES.get());
         tag(BlockTags.LOGS)
-                .add(PonyBlocks.GOLDEN_LOG.get());
+                .add(PonyBlocks.GOLDEN_LOG.get())
+                .add(PonyBlocks.ZAP_LOG.get());
         tag(BlockTags.SAPLINGS)
-                .add(PonyBlocks.GOLDEN_SAPLING.get());
+                .add(PonyBlocks.GOLDEN_SAPLING.get())
+                .add(PonyBlocks.ZAP_SAPLING.get());
         tag(BlockTags.FENCES)
-                .add(PonyBlocks.GOLDEN_FENCE.get());
+                .add(PonyBlocks.GOLDEN_FENCE.get())
+                .add(PonyBlocks.ZAP_FENCE.get());
         tag(BlockTags.WOODEN_FENCES)
-                .add(PonyBlocks.GOLDEN_FENCE.get());
+                .add(PonyBlocks.GOLDEN_FENCE.get())
+                .add(PonyBlocks.ZAP_FENCE.get());
         tag(BlockTags.FENCE_GATES)
-                .add(PonyBlocks.GOLDEN_FENCE_GATE.get());
+                .add(PonyBlocks.GOLDEN_FENCE_GATE.get())
+                .add(PonyBlocks.ZAP_FENCE_GATE.get());
         tag(BlockTags.TRAPDOORS)
-                .add(PonyBlocks.GOLDEN_TRAPDOOR.get());
+                .add(PonyBlocks.GOLDEN_TRAPDOOR.get())
+                .add(PonyBlocks.ZAP_TRAPDOOR.get());
         tag(BlockTags.WOODEN_TRAPDOORS)
-                .add(PonyBlocks.GOLDEN_TRAPDOOR.get());
+                .add(PonyBlocks.GOLDEN_TRAPDOOR.get())
+                .add(PonyBlocks.ZAP_TRAPDOOR.get());
         tag(BlockTags.DOORS)
-                .add(PonyBlocks.GOLDEN_DOOR.get());
+                .add(PonyBlocks.GOLDEN_DOOR.get())
+                .add(PonyBlocks.ZAP_DOOR.get());
         tag(BlockTags.WOODEN_DOORS)
-                .add(PonyBlocks.GOLDEN_DOOR.get());
+                .add(PonyBlocks.GOLDEN_DOOR.get())
+                .add(PonyBlocks.ZAP_DOOR.get());
         tag(BlockTags.MINEABLE_WITH_AXE)
                 .add(PonyBlocks.GOLDEN_LOG.get())
                 .add(PonyBlocks.STRIPPED_GOLDEN_LOG.get())
@@ -53,8 +63,20 @@ public class LBlockTagProvider extends BlockTagsProvider {
                 .add(PonyBlocks.GOLDEN_FENCE.get())
                 .add(PonyBlocks.GOLDEN_FENCE_GATE.get())
                 .add(PonyBlocks.GOLDEN_BUTTON.get())
-                .add(PonyBlocks.GOLDEN_PRESSURE_PlATE.get());
+                .add(PonyBlocks.GOLDEN_PRESSURE_PlATE.get())
+                .add(PonyBlocks.ZAP_LOG.get())
+                .add(PonyBlocks.STRIPPED_ZAP_LOG.get())
+                .add(PonyBlocks.ZAP_PLANKS.get())
+                .add(PonyBlocks.ZAP_WOOD.get())
+                .add(PonyBlocks.STRIPPED_ZAP_WOOD.get())
+                .add(PonyBlocks.ZAP_SLAB.get())
+                .add(PonyBlocks.ZAP_STAIRS.get())
+                .add(PonyBlocks.ZAP_FENCE.get())
+                .add(PonyBlocks.ZAP_FENCE_GATE.get())
+                .add(PonyBlocks.ZAP_BUTTON.get())
+                .add(PonyBlocks.ZAP_PRESSURE_PlATE.get());
         tag(BlockTags.MINEABLE_WITH_HOE)
-                .add(PonyBlocks.GOLDEN_LEAVES.get());
+                .add(PonyBlocks.GOLDEN_LEAVES.get())
+                .add(PonyBlocks.ZAP_LEAVES.get());
     }
 }

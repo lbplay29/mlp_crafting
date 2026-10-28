@@ -1,5 +1,6 @@
 package net.ona.mlpfrien.worldgen;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
@@ -26,6 +27,10 @@ import java.util.List;
 
 public class PonyConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?,?>> GOLDEN_TREE = registerKey("golden_tree");
+    public static final ResourceKey<ConfiguredFeature<?,?>> ZAP_TREE = registerKey("zap_tree");
+    public static final ResourceKey<ConfiguredFeature<?,?>> APPLE_TREE = registerKey("apple_tree");
+    public static final ResourceKey<ConfiguredFeature<?,?>> SOUR_APPLE_TREE = registerKey("sour_apple_tree");
+    public static final ResourceKey<ConfiguredFeature<?,?>> GREEN_APPLE_TREE = registerKey("green_apple_tree");
 
     public static void bootstrap(BootstrapContext<ConfiguredFeature<?,?>> context) {
         RuleTest deepslateReplaceable = new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
@@ -34,6 +39,18 @@ public class PonyConfiguredFeatures {
 //                OreConfiguration.target(deepslateReplaceable, Blocks.ACACIA_HANGING_SIGN.defaultBlockState()));
 
         register(context, GOLDEN_TREE, Feature.TREE, new TreeConfiguration.TreeConfigurationBuilder(BlockStateProvider.simple(PonyBlocks.GOLDEN_LOG.get()),
+                new StraightTrunkPlacer(4,2,0),BlockStateProvider.simple(PonyBlocks.GOLDEN_LEAVES.get()),
+                new BlobFoliagePlacer(ConstantInt.of(2),ConstantInt.of(0),3),new TwoLayersFeatureSize(1,0,1)).build());
+        register(context, ZAP_TREE, Feature.TREE, new TreeConfiguration.TreeConfigurationBuilder(BlockStateProvider.simple(PonyBlocks.ZAP_LOG.get()),
+                new StraightTrunkPlacer(4,2,0),BlockStateProvider.simple(PonyBlocks.ZAP_LEAVES.get()),
+                new BlobFoliagePlacer(ConstantInt.of(2),ConstantInt.of(0),3),new TwoLayersFeatureSize(1,0,1)).build());
+        register(context, APPLE_TREE, Feature.TREE, new TreeConfiguration.TreeConfigurationBuilder(BlockStateProvider.simple(Blocks.OAK_LOG),
+                new StraightTrunkPlacer(4,2,0),BlockStateProvider.simple(PonyBlocks.GOLDEN_LEAVES.get()),
+                new BlobFoliagePlacer(ConstantInt.of(2),ConstantInt.of(0),3),new TwoLayersFeatureSize(1,0,1)).build());
+        register(context, SOUR_APPLE_TREE, Feature.TREE, new TreeConfiguration.TreeConfigurationBuilder(BlockStateProvider.simple(Blocks.OAK_LOG),
+                new StraightTrunkPlacer(4,2,0),BlockStateProvider.simple(PonyBlocks.GOLDEN_LEAVES.get()),
+                new BlobFoliagePlacer(ConstantInt.of(2),ConstantInt.of(0),3),new TwoLayersFeatureSize(1,0,1)).build());
+        register(context, GREEN_APPLE_TREE, Feature.TREE, new TreeConfiguration.TreeConfigurationBuilder(BlockStateProvider.simple(Blocks.OAK_LOG),
                 new StraightTrunkPlacer(4,2,0),BlockStateProvider.simple(PonyBlocks.GOLDEN_LEAVES.get()),
                 new BlobFoliagePlacer(ConstantInt.of(2),ConstantInt.of(0),3),new TwoLayersFeatureSize(1,0,1)).build());
 

@@ -46,10 +46,28 @@ public class LBlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(PonyBlocks.STRIPPED_GOLDEN_WOOD.get());
         dropSelf(PonyBlocks.GOLDEN_DOOR.get());
         dropSelf(PonyBlocks.GOLDEN_TRAPDOOR.get());
-        add(PonyBlocks.GOLDEN_LEAVES.get(), block -> createGoldenLeavesDrops(PonyBlocks.GOLDEN_LEAVES.get(), PonyBlocks.GOLDEN_SAPLING.get(),
+        add(PonyBlocks.GOLDEN_LEAVES.get(), block -> createLeavesDrops(PonyBlocks.GOLDEN_LEAVES.get(), PonyBlocks.GOLDEN_SAPLING.get(),
                 0.005F, 0.0055555557F, 0.00625F, 0.008333334F, 0.025F));
-//        add(PonyBlocks.ENCRUSTED_DEEPSLATE.get(), block ->
-//                mulipleOreDrop(PonyBlocks.ENCRUSTED_DEEPSLATE.get(), PonyBlocks.BEDROCK_DUST.get(), 1, 2));
+
+        dropSelf(PonyBlocks.ZAP_LOG.get());
+        dropSelf(PonyBlocks.ZAP_SAPLING.get());
+        dropSelf(PonyBlocks.STRIPPED_ZAP_LOG.get());
+        dropSelf(PonyBlocks.ZAP_PLANKS.get());
+        dropSelf(PonyBlocks.ZAP_FENCE_GATE.get());
+        dropSelf(PonyBlocks.ZAP_FENCE.get());
+        dropSelf(PonyBlocks.ZAP_PRESSURE_PlATE.get());
+        dropSelf(PonyBlocks.ZAP_BUTTON.get());
+        dropSelf(PonyBlocks.ZAP_STAIRS.get());
+        dropSelf(PonyBlocks.ZAP_SLAB.get());
+        dropSelf(PonyBlocks.ZAP_WOOD.get());
+        dropSelf(PonyBlocks.STRIPPED_ZAP_WOOD.get());
+        dropSelf(PonyBlocks.ZAP_DOOR.get());
+        dropSelf(PonyBlocks.ZAP_TRAPDOOR.get());
+        add(PonyBlocks.ZAP_LEAVES.get(), block -> createLeavesDrops(PonyBlocks.ZAP_LEAVES.get(), PonyBlocks.GOLDEN_SAPLING.get(),
+                0.005F, 0.0055555557F, 0.00625F, 0.008333334F, 0.025F));
+
+        add(PonyBlocks.APPLE_LEAVES.get(), block -> createLeavesDrops(PonyBlocks.APPLE_LEAVES.get(), PonyBlocks.GOLDEN_SAPLING.get(),
+                0.005F, 0.0055555557F, 0.00625F, 0.008333334F, 0.025F));
     }
 
     protected LootTable.Builder mulipleOreDrop(Block block, Item item, float minDrop, float maxDrop) {
@@ -57,14 +75,6 @@ public class LBlockLootTableProvider extends BlockLootSubProvider {
         return this.createSilkTouchDispatchTable(block, this.applyExplosionDecay(block, LootItem.lootTableItem(item)
                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1,2)))
                 .apply(ApplyBonusCount.addOreBonusCount(registryLookup.getOrThrow(Enchantments.FORTUNE)))));
-    }
-
-    protected LootTable.Builder createGoldenLeavesDrops(Block oakLeavesBlock, Block saplingBlock, float... chances) {
-        HolderLookup.RegistryLookup<Enchantment> registrylookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
-        return this.createLeavesDrops(oakLeavesBlock, saplingBlock, chances).withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-                .when(noSilkTouchNorShear).add(((LootPoolSingletonContainer.Builder)this.applyExplosionCondition(
-                        oakLeavesBlock, LootItem.lootTableItem(Items.GOLDEN_APPLE))).when(BonusLevelTableCondition.bonusLevelFlatChance(registrylookup.getOrThrow(Enchantments.FORTUNE),
-                        0.05f, 0.0625f, 0.083333336f, 0.1f))));
     }
 
     @Override

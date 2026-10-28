@@ -57,6 +57,7 @@ public class MyLittlePonyCraftingFriends {
             event.accept(PonyItems.CARAMEL_APPLE);
             event.accept(PonyItems.SOUR_APPLE);
             event.accept(PonyItems.GREEN_APPLE);
+            event.accept(PonyItems.ZAP_APPLE);
         }
         if (event.getTabKey()== CreativeModeTabs.NATURAL_BLOCKS) {
             event.accept(PonyBlocks.GOLDEN_LEAVES.asItem());
@@ -77,6 +78,20 @@ public class MyLittlePonyCraftingFriends {
             event.accept(PonyBlocks.GOLDEN_FENCE_GATE.asItem());
             event.accept(PonyBlocks.GOLDEN_TRAPDOOR.asItem());
             event.accept(PonyBlocks.GOLDEN_DOOR.asItem());
+
+            event.accept(PonyBlocks.ZAP_LOG.asItem());
+            event.accept(PonyBlocks.STRIPPED_ZAP_LOG.asItem());
+            event.accept(PonyBlocks.ZAP_WOOD.asItem());
+            event.accept(PonyBlocks.STRIPPED_ZAP_WOOD.asItem());
+            event.accept(PonyBlocks.ZAP_PLANKS.asItem());
+            event.accept(PonyBlocks.ZAP_BUTTON.asItem());
+            event.accept(PonyBlocks.ZAP_SLAB.asItem());
+            event.accept(PonyBlocks.ZAP_STAIRS.asItem());
+            event.accept(PonyBlocks.ZAP_PRESSURE_PlATE.asItem());
+            event.accept(PonyBlocks.ZAP_FENCE.asItem());
+            event.accept(PonyBlocks.ZAP_FENCE_GATE.asItem());
+            event.accept(PonyBlocks.ZAP_TRAPDOOR.asItem());
+            event.accept(PonyBlocks.ZAP_DOOR.asItem());
         }
     }
 
