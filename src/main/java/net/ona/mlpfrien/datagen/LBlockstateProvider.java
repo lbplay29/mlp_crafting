@@ -2,8 +2,11 @@ package net.ona.mlpfrien.datagen;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -12,11 +15,15 @@ import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.block.AppleLeavesBlock;
 import net.ona.mlpfrien.init.PonyBlocks;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class LBlockstateProvider extends BlockStateProvider {
+    private ExistingFileHelper existingFileHelper;
+
     public LBlockstateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
         super(output, MyLittlePonyCraftingFriends.MODID, exFileHelper);
+        existingFileHelper = exFileHelper;
     }
 
     @Override
@@ -59,6 +66,9 @@ public class LBlockstateProvider extends BlockStateProvider {
         simpleBlockItem(PonyBlocks.ZAP_FENCE.get(),models().fenceInventory("zap_fence_inventory", blockTexture(PonyBlocks.ZAP_PLANKS.get())));
         simpleBlockItem(PonyBlocks.ZAP_TRAPDOOR.get(),new ModelFile.UncheckedModelFile(modLoc("block/zap_trapdoor_bottom")));
 
+        simpleBlock(PonyBlocks.APPLE_SAPLING.get(),models().cross(BuiltInRegistries.BLOCK.getKey(PonyBlocks.APPLE_SAPLING.get()).getPath(),
+                blockTexture(PonyBlocks.APPLE_SAPLING.get())).renderType("cutout"));
+
         getVariantBuilder(PonyBlocks.ZAP_LEAVES.get())
                 .partialState().with(AppleLeavesBlock.AGE, 0).modelForState()
                 .modelFile(appleVariantTextures(PonyBlocks.ZAP_LEAVES.get()).get(0)).addModel()
@@ -83,21 +93,39 @@ public class LBlockstateProvider extends BlockStateProvider {
                 .partialState().with(AppleLeavesBlock.AGE, 1).modelForState()
                 .modelFile(appleVariantTextures(PonyBlocks.APPLE_LEAVES.get()).get(1)).addModel()
                 .partialState().with(AppleLeavesBlock.AGE, 2).modelForState()
-                .modelFile(appleVariantTextures(PonyBlocks.APPLE_LEAVES.get()).get(3)).addModel()
+                .modelFile(appleVariantTextures(PonyBlocks.APPLE_LEAVES.get()).get(2)).addModel()
                 .partialState().with(AppleLeavesBlock.AGE, 3).modelForState()
-                .modelFile(appleVariantTextures(PonyBlocks.APPLE_LEAVES.get()).get(2)).addModel();
+                .modelFile(appleVariantTextures(PonyBlocks.APPLE_LEAVES.get()).get(3)).addModel();
     }
 
     private List<ModelFile> appleVariantTextures(Block block) {
         String name = BuiltInRegistries.BLOCK.getKey(block).getPath();
-        ModelFile normal = models().withExistingParent(name, mcLoc("block/leaves"))
-                .texture("all", modLoc("block/"+name)).renderType("minecraft:cutout_mipped");
-        ModelFile flowers = models().withExistingParent(name+"_flowering", mcLoc("block/leaves"))
-                .texture("all", modLoc("block/"+name+"_flowering")).renderType("minecraft:cutout_mipped");
-        ModelFile apples = models().withExistingParent(name+"_budding", mcLoc("block/leaves"))
-                .texture("all", modLoc("block/"+name+"_budding")).renderType("minecraft:cutout_mipped");
-        ModelFile applesTwo = models().withExistingParent(name+"_mature", mcLoc("block/leaves"))
-                .texture("all", modLoc("block/"+name+"_mature")).renderType("minecraft:cutout_mipped");
-        return List.of(normal,flowers,apples,applesTwo);
+        ResourceLocation buddingLoc = modLoc("block/"+name+"_budding_overlay");
+        boolean hasBudding = existingFileHelper.exists(buddingLoc, PackType.CLIENT_RESOURCES, ".png", "textures");
+
+        ModelFile normal = appleLeavesModel(name,modLoc("block/"+name),null);
+        ModelFile flowers = appleLeavesModel(name+"_flowering",modLoc("block/"+name),modLoc("block/"+name+"_flowering_overlay"));
+        ModelFile applesTwo = appleLeavesModel(name+"_mature",modLoc("block/"+name),modLoc("block/"+name+"_mature_overlay"));
+        if (hasBudding) {
+            ModelFile apples = appleLeavesModel(name+"_budding",modLoc("block/"+name),buddingLoc);
+            return List.of(normal,flowers,apples,applesTwo);
+        }
+        return List.of(normal,flowers,applesTwo,applesTwo);
+    }
+
+    private BlockModelBuilder appleLeavesModel(String name, ResourceLocation leavesTexture, @Nullable ResourceLocation overlayTexture) {
+        BlockModelBuilder model = models().withExistingParent(name,mcLoc("block/block")).texture("leaves", leavesTexture)
+                .texture("particle", leavesTexture).renderType("minecraft:cutout_mipped");
+        if (overlayTexture != null) {
+            model.texture("overlay", overlayTexture);
+        }
+
+        model.element().from(0, 0, 0).to(16, 16, 16).allFaces((direction, face) -> face.texture("#leaves")
+                .tintindex(0).cullface(direction)).end();
+        if (overlayTexture != null) {
+            model.element().from(-0.01F, -0.01F, -0.01F).to(16.01F, 16.01F, 16.01F).allFaces((direction, face) ->
+                    face.texture("#overlay")).end();
+        }
+        return model;
     }
 }

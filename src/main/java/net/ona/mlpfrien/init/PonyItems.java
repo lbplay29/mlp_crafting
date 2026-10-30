@@ -20,10 +20,10 @@ public class PonyItems {
 
     public static final DeferredItem<Item> CARAMEL_APPLE = ITEMS.register("caramel_apple",()-> new Item(new Item.Properties().food(new FoodProperties.Builder()
             .saturationModifier(0.5f).nutrition(6).build())));
-    public static final DeferredItem<Item> GREEN_APPLE = ITEMS.register("green_apple",()-> new Item(new Item.Properties().food(new FoodProperties.Builder()
-            .saturationModifier(0.2f).nutrition(4).build())));
-    public static final DeferredItem<Item> SOUR_APPLE = ITEMS.register("sour_apple",()-> new Item(new Item.Properties().food(new FoodProperties.Builder()
-            .saturationModifier(0.2f).nutrition(4).build())));
+//    public static final DeferredItem<Item> GREEN_APPLE = ITEMS.register("green_apple",()-> new Item(new Item.Properties().food(new FoodProperties.Builder()
+//            .saturationModifier(0.2f).nutrition(4).build())));
+//    public static final DeferredItem<Item> SOUR_APPLE = ITEMS.register("sour_apple",()-> new Item(new Item.Properties().food(new FoodProperties.Builder()
+//            .saturationModifier(0.2f).nutrition(4).build())));
     public static final DeferredItem<Item> ZAP_APPLE = ITEMS.register("zap_apple",()-> new Item(new Item.Properties().food(new FoodProperties.Builder()
             .saturationModifier(1.5f).nutrition(6).build()).rarity(Rarity.EPIC)));
 

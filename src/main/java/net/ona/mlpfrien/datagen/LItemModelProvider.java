@@ -19,8 +19,8 @@ public class LItemModelProvider extends ItemModelProvider {
     protected void registerModels() {
         basicItem(PonyItems.HAY_BURGUER.get());
         basicItem(PonyItems.CARAMEL_APPLE.get());
-        basicItem(PonyItems.GREEN_APPLE.get());
-        basicItem(PonyItems.SOUR_APPLE.get());
+//        basicItem(PonyItems.GREEN_APPLE.get());
+//        basicItem(PonyItems.SOUR_APPLE.get());
         basicItem(PonyItems.ZAP_APPLE.get());
         basicItem(PonyItems.CRUSADER_EMBLEM.get());
         basicItem(PonyBlocks.GOLDEN_SAPLING.asItem());
@@ -48,6 +48,7 @@ public class LItemModelProvider extends ItemModelProvider {
         simpleBlockItem(PonyBlocks.STRIPPED_ZAP_WOOD.get());
         simpleBlockItem(PonyBlocks.ZAP_LEAVES.get());
 
+        basicItem(PonyBlocks.APPLE_SAPLING.asItem());
         simpleBlockItem(PonyBlocks.APPLE_LEAVES.get());
     }
 

@@ -23,6 +23,9 @@ import net.ona.mlpfrien.ponyvisuals.render.PonyTextureManager;
 import net.ona.mlpfrien.util.TextImageButton;
 import net.ona.mlpfrien.util.BasicUtilities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static net.ona.mlpfrien.util.BasicUtilities.id;
 
 public class PonyCreatorGUI extends Screen {
@@ -37,15 +40,18 @@ public class PonyCreatorGUI extends Screen {
     private enum TABS {
         body,
         mane,
-        other
+        eye,
+        magic
     }
     private PonyData ponyData;
     private AppearanceData appearanceData;
     private Player player;
     private PonyData.RACES selectedRace;
+    private TextImageButton magicColoring;
     private ColorPickerWidget coatPicker;
     private ColorPickerWidget manePicker;
     private ColorPickerWidget eyePicker;
+    private ColorPickerWidget magicPicker;
     private PAGES thisPage;
     private TextImageButton maneStyleButton;
     private TextImageButton lastConfirm;
@@ -98,28 +104,34 @@ public class PonyCreatorGUI extends Screen {
 
     private void buildPageTwo() {
         clearWidgets();
-        this.addRenderableWidget(new TextImageButton(this.width / 2 -60, this.height / 2 - 90, 86, 29, OPTION_SPRITES, button ->{
+        this.addRenderableWidget(new TextImageButton(this.width / 2 -160, this.height / 2 + 40, 86, 29, OPTION_SPRITES, button ->{
             updateTab(TABS.body);}, Component.literal("Body"), this.font));
-        this.addRenderableWidget(new TextImageButton(this.width / 2 +30, this.height / 2 - 90, 86, 29, OPTION_SPRITES, button ->{
+        this.addRenderableWidget(new TextImageButton(this.width / 2 -160, this.height / 2 , 86, 29, OPTION_SPRITES, button ->{
             updateTab(TABS.mane);}, Component.literal("Mane"), this.font));
-        this.addRenderableWidget(new TextImageButton(this.width / 2 +120, this.height / 2 - 90, 86, 29, OPTION_SPRITES, button ->{
-            updateTab(TABS.other);}, Component.literal("Eyes"), this.font));
+        this.addRenderableWidget(new TextImageButton(this.width / 2 -160, this.height / 2 - 40, 86, 29, OPTION_SPRITES, button ->{
+            updateTab(TABS.eye);}, Component.literal("Eyes"), this.font));
+        magicColoring = new TextImageButton(this.width / 2 -160, this.height / 2 - 80, 86, 29, OPTION_SPRITES, button ->{
+            updateTab(TABS.magic);}, Component.literal("Magic"), this.font);
         maneStyleButton = new TextImageButton(this.width / 2 +60, this.height / 2 +100, 86, 29, OPTION_SPRITES, button ->{
             updateTextureA(player, withManeStyle(BasicUtilities
                     .loopingInt(5,appearanceData.maneStyle()),appearanceData));}, Component.literal("Mane Style: "+appearanceData.maneStyle()), this.font);
         this.addRenderableWidget(maneStyleButton);
 
-        coatPicker = new ColorPickerWidget(this.width / 2 + 62, this.height / 2-46, 120, 70, appearanceData.coatColor(),
-                newColor -> {updateTextureA(player, withCoatColor(newColor,appearanceData));});
-        manePicker = new ColorPickerWidget(this.width / 2 + 62, this.height / 2-46, 120, 70, appearanceData.maneColor(),
-                newColor -> {updateTextureA(player, withManeColor(newColor,appearanceData));});
-        eyePicker = new ColorPickerWidget(this.width / 2 + 62, this.height / 2-46, 120, 70, appearanceData.eyeColor(),
-                newColor -> {updateTextureA(player, withEyeColor(newColor,appearanceData));});
+        coatPicker = new ColorPickerWidget(this.width / 2 + 62, this.height / 2-46, 120, 70, appearanceData.colors().get(0),
+                newColor -> {updateTextureA(player, withColor(newColor,0,appearanceData));});
+        manePicker = new ColorPickerWidget(this.width / 2 + 62, this.height / 2-46, 120, 70, appearanceData.colors().get(1),
+                newColor -> {updateTextureA(player, withColor(newColor,1,appearanceData));});
+        eyePicker = new ColorPickerWidget(this.width / 2 + 62, this.height / 2-46, 120, 70, appearanceData.colors().get(2),
+                newColor -> {updateTextureA(player, withColor(newColor,2,appearanceData));});
+        magicPicker = new ColorPickerWidget(this.width / 2 + 62, this.height / 2-46, 120, 70, appearanceData.colors().get(3),
+                newColor -> {updateTextureA(player, withColor(newColor,3,appearanceData));});
         updateTab(TABS.body);
 
         this.addRenderableWidget(manePicker);
         this.addRenderableWidget(coatPicker);
         this.addRenderableWidget(eyePicker);
+        this.addRenderableWidget(magicPicker);
+        this.addRenderableWidget(magicColoring);
         this.addRenderableWidget(new TextImageButton(this.width / 2 +175, this.height / 2 + 100, 56, 29, CONFIRM_SPRITES, button -> {
             choosePage(PAGES.MARK);}, Component.literal("Confirm"), this.font));
     }
@@ -150,12 +162,12 @@ public class PonyCreatorGUI extends Screen {
     private void updateTab(TABS newTab) {
         coatPicker.visible = newTab==TABS.body;
         coatPicker.active = newTab==TABS.body;
-
         manePicker.visible = newTab==TABS.mane;
         manePicker.active = newTab==TABS.mane;
-
-        eyePicker.visible = newTab==TABS.other;
-        eyePicker.active = newTab==TABS.other;
+        eyePicker.visible = newTab==TABS.eye;
+        eyePicker.active = newTab==TABS.eye;
+        magicPicker.visible = newTab==TABS.magic;
+        magicPicker.active = newTab==TABS.magic;
     }
 
     @Override
@@ -187,6 +199,8 @@ public class PonyCreatorGUI extends Screen {
                     guiGraphics.drawString(this.font, line, this.width/2+75, textY, 0xFFFFFF,true);
                     textY += this.font.lineHeight;
                 }
+                magicColoring.visible=ponyData.race().canUseMagic();
+                magicColoring.active=ponyData.race().canUseMagic();
             }
         }
 
@@ -231,15 +245,11 @@ public class PonyCreatorGUI extends Screen {
         return new PonyData(newRace, curData.cutieMark(),curData.discoveredCM());
     }
     public AppearanceData withManeStyle(int newStyle, AppearanceData curData) {
-        return new AppearanceData(newStyle, curData.coatColor(), curData.maneColor(), curData.eyeColor());
+        return new AppearanceData(newStyle, curData.colors());
     }
-    public AppearanceData withCoatColor(int newCoat, AppearanceData curData) {
-        return new AppearanceData(curData.maneStyle(), newCoat, curData.maneColor(), curData.eyeColor());
-    }
-    public AppearanceData withManeColor(int newMane, AppearanceData curData) {
-        return new AppearanceData(curData.maneStyle(), curData.coatColor(), newMane, curData.eyeColor());
-    }
-    public AppearanceData withEyeColor(int newEye, AppearanceData curData) {
-        return new AppearanceData(curData.maneStyle(), curData.coatColor(), curData.maneColor(), newEye);
+    public AppearanceData withColor(int newColor, int index, AppearanceData curData) {
+        List<Integer> newColors = curData.colors();
+        newColors.set(index,newColor);
+        return new AppearanceData(curData.maneStyle(), newColors);
     }
 }

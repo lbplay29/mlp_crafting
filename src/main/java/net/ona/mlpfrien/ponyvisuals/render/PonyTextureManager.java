@@ -5,10 +5,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.data.AppearanceData;
 import net.ona.mlpfrien.data.PonyAttachments;
 import net.ona.mlpfrien.data.PonyData;
+import net.ona.mlpfrien.network.AppearanceDataPayload;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,9 +44,15 @@ public class PonyTextureManager {
             NativeImage image = loadBaseTexture();
 
             CutieMarkManager.applyCutieMarkTexture(image,player);
-            applyCoatColor(image, data.coatColor());
-            applyEyeColor(image, data.eyeColor());
-            applyManeColor(image, data.maneColor());
+            applyCoatColor(image, data.colors().get(0));
+            applyManeColor(image, data.colors().get(1));
+            applyEyeColor(image, data.colors().get(2));
+            try {
+                applyMagicColor(image, data.colors().get(3));
+            } catch (IndexOutOfBoundsException e) {
+                PacketDistributor.sendToServer(new AppearanceDataPayload(AppearanceData.defaultData()));
+            }
+
 
             DynamicTexture texture = new DynamicTexture(image);
             ResourceLocation location = ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID, "dynamic/pony/" + player.getUUID());
@@ -77,6 +85,19 @@ public class PonyTextureManager {
                     image.setPixelRGBA(x, y, replacement);
                 } else if (image.getPixelRGBA(x, y) == markerDark) {
                     image.setPixelRGBA(x, y, replacementDark);
+                }
+            }
+        }
+    }
+
+    private static void applyMagicColor(NativeImage image, int magicRgb) {
+        int marker = rgbToAbgr(0xFF00DD);
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                if ((image.getPixelRGBA(x, y)& 0x00FFFFFF) == (marker& 0x00FFFFFF)) {
+                    int alpha = (image.getPixelRGBA(x, y) >>> 24) & 0xFF;
+                    image.setPixelRGBA(x, y, (alpha << 24) | (magicRgb & 0x00FFFFFF));
                 }
             }
         }

@@ -85,10 +85,8 @@ public class PonyBlocks {
 
     public static final DeferredBlock<LeavesBlock> APPLE_LEAVES = registerBlock("apple_leaves",()->
             new AppleLeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES).ignitedByLava(),()-> Items.APPLE,2),Rarity.COMMON);
-//    public static final DeferredBlock<LeavesBlock> GREEN_APPLE_LEAVES = registerBlock("green_apple_leaves",()->
-//            new AppleLeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES).ignitedByLava(),PonyItems.GREEN_APPLE,2),Rarity.COMMON);
-//    public static final DeferredBlock<LeavesBlock> SOUR_APPLE_LEAVES = registerBlock("sour_apple_leaves",()->
-//            new AppleLeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES).ignitedByLava(),PonyItems.SOUR_APPLE,2),Rarity.COMMON);
+    public static final DeferredBlock<SaplingBlock> APPLE_SAPLING = registerBlock("apple_sapling",()->
+            new SaplingBlock(PonyTreeGrowers.APPLE_TREE, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING)),Rarity.COMMON);
 
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);

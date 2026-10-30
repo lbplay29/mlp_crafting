@@ -24,7 +24,8 @@ public class LBlockTagProvider extends BlockTagsProvider {
     protected void addTags(HolderLookup.Provider provider) {
         tag(BlockTags.LEAVES)
                 .add(PonyBlocks.GOLDEN_LEAVES.get())
-                .add(PonyBlocks.ZAP_LEAVES.get());
+                .add(PonyBlocks.ZAP_LEAVES.get())
+                .add(PonyBlocks.APPLE_LEAVES.get());
         tag(BlockTags.LOGS)
                 .add(PonyBlocks.GOLDEN_LOG.get())
                 .add(PonyBlocks.ZAP_LOG.get());
@@ -77,6 +78,7 @@ public class LBlockTagProvider extends BlockTagsProvider {
                 .add(PonyBlocks.ZAP_PRESSURE_PlATE.get());
         tag(BlockTags.MINEABLE_WITH_HOE)
                 .add(PonyBlocks.GOLDEN_LEAVES.get())
-                .add(PonyBlocks.ZAP_LEAVES.get());
+                .add(PonyBlocks.ZAP_LEAVES.get())
+                .add(PonyBlocks.APPLE_LEAVES.get());
     }
 }

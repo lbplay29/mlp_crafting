@@ -25,7 +25,6 @@ import net.ona.mlpfrien.init.PonyBlocks;
 import java.util.Set;
 
 public class LBlockLootTableProvider extends BlockLootSubProvider {
-    protected LootItemCondition.Builder noSilkTouchNorShear = HAS_SHEARS.or(hasSilkTouch()).invert();
     protected LBlockLootTableProvider(HolderLookup.Provider registries) {
         super(Set.of(), FeatureFlags.REGISTRY.allFlags(), registries);
     }
@@ -44,10 +43,10 @@ public class LBlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(PonyBlocks.GOLDEN_SLAB.get());
         dropSelf(PonyBlocks.GOLDEN_WOOD.get());
         dropSelf(PonyBlocks.STRIPPED_GOLDEN_WOOD.get());
-        dropSelf(PonyBlocks.GOLDEN_DOOR.get());
+        add(PonyBlocks.GOLDEN_DOOR.get(),block -> createDoorTable(PonyBlocks.GOLDEN_DOOR.get()));
         dropSelf(PonyBlocks.GOLDEN_TRAPDOOR.get());
         add(PonyBlocks.GOLDEN_LEAVES.get(), block -> createLeavesDrops(PonyBlocks.GOLDEN_LEAVES.get(), PonyBlocks.GOLDEN_SAPLING.get(),
-                0.005F, 0.0055555557F, 0.00625F, 0.008333334F, 0.025F));
+                0.05F, 0.0625F, 0.083333336F, 0.1F));
 
         dropSelf(PonyBlocks.ZAP_LOG.get());
         dropSelf(PonyBlocks.ZAP_SAPLING.get());
@@ -61,13 +60,14 @@ public class LBlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(PonyBlocks.ZAP_SLAB.get());
         dropSelf(PonyBlocks.ZAP_WOOD.get());
         dropSelf(PonyBlocks.STRIPPED_ZAP_WOOD.get());
-        dropSelf(PonyBlocks.ZAP_DOOR.get());
+        add(PonyBlocks.ZAP_DOOR.get(),block -> createDoorTable(PonyBlocks.ZAP_DOOR.get()));
         dropSelf(PonyBlocks.ZAP_TRAPDOOR.get());
-        add(PonyBlocks.ZAP_LEAVES.get(), block -> createLeavesDrops(PonyBlocks.ZAP_LEAVES.get(), PonyBlocks.GOLDEN_SAPLING.get(),
-                0.005F, 0.0055555557F, 0.00625F, 0.008333334F, 0.025F));
+        add(PonyBlocks.ZAP_LEAVES.get(), block -> createLeavesDrops(PonyBlocks.ZAP_LEAVES.get(), PonyBlocks.ZAP_SAPLING.get(),
+                0.05F, 0.0625F, 0.083333336F, 0.1F));
 
-        add(PonyBlocks.APPLE_LEAVES.get(), block -> createLeavesDrops(PonyBlocks.APPLE_LEAVES.get(), PonyBlocks.GOLDEN_SAPLING.get(),
-                0.005F, 0.0055555557F, 0.00625F, 0.008333334F, 0.025F));
+        add(PonyBlocks.APPLE_LEAVES.get(), block -> createLeavesDrops(PonyBlocks.APPLE_LEAVES.get(), PonyBlocks.APPLE_SAPLING.get(),
+                0.05F, 0.0625F, 0.083333336F, 0.1F));
+        dropSelf(PonyBlocks.APPLE_SAPLING.get());
     }
 
     protected LootTable.Builder mulipleOreDrop(Block block, Item item, float minDrop, float maxDrop) {

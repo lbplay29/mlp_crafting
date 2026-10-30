@@ -31,10 +31,11 @@
   "block.mlpfrien.zap_door": "Zap Apple Door",
   "block.mlpfrien.zap_trapdoor": "Zap Apple Trapdoor",
 
+  "block.mlpfrien.apple_leaves": "Apple Leaves",
+  "block.mlpfrien.apple_sapling": "Apple Sapling",
+
   "item.mlpfrien.hay_burguer": "Hay Burguer",
   "item.mlpfrien.caramel_apple": "Caramel Apple",
-  "item.mlpfrien.sour_apple": "Sweet Apple",
-  "item.mlpfrien.green_apple": "Green Apple",
   "item.mlpfrien.zap_apple": "Zap Apple",
   "item.mlpfrien.crusader_emblem": "Crusader Emblem",
 

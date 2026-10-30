@@ -3,10 +3,13 @@ package net.ona.mlpfrien.events;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.color.item.ItemColor;
+import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.FoliageColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -125,7 +128,18 @@ public class PonyClientEvents {
     @SubscribeEvent
     public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
         event.register((state, level, pos, tintIndex) -> {
-                    if (level != null && pos != null) {return BiomeColors.getAverageFoliageColor(level, pos);}return FoliageColor.getDefaultColor();},
-                PonyBlocks.APPLE_LEAVES.get());
+            if (tintIndex!=0) {
+                return 0xFFFFFFFF;
+            }
+            if (level != null && pos != null) {
+                return BiomeColors.getAverageFoliageColor(level, pos);
+            }
+            return FoliageColor.getDefaultColor();}, PonyBlocks.APPLE_LEAVES.get());
+    }
+
+    @SubscribeEvent
+    public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+        event.register((itemStack, i) -> 0x20D020,
+                PonyBlocks.APPLE_LEAVES.get().asItem());
     }
 }

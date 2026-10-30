@@ -1,10 +1,7 @@
 package net.ona.mlpfrien;
 
 import net.ona.mlpfrien.data.PonyAttachments;
-import net.ona.mlpfrien.init.PonyBlocks;
-import net.ona.mlpfrien.init.PonyEntities;
-import net.ona.mlpfrien.init.PonyItems;
-import net.ona.mlpfrien.init.PonyTriggers;
+import net.ona.mlpfrien.init.*;
 import net.ona.mlpfrien.network.PonyNetworking;
 import net.ona.mlpfrien.util.Config;
 import org.slf4j.Logger;
@@ -22,10 +19,8 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
-// The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(MyLittlePonyCraftingFriends.MODID)
 public class MyLittlePonyCraftingFriends {
-    // Define mod id in a common place for everything to reference
     public static final String MODID = "mlpfrien";
 
     public static final Logger LOGGER = LogUtils.getLogger();
@@ -40,6 +35,7 @@ public class MyLittlePonyCraftingFriends {
         modEventBus.addListener(PonyNetworking::registerPayloads);
         PonyItems.register(modEventBus);
         PonyBlocks.register(modEventBus);
+        PonyFeatures.register(modEventBus);
         PonyEntities.ENTITY_TYPES.register(modEventBus);
         PonyTriggers.TRIGGERS.register(modEventBus);
 
@@ -55,14 +51,17 @@ public class MyLittlePonyCraftingFriends {
         if (event.getTabKey() == CreativeModeTabs.FOOD_AND_DRINKS) {
             event.accept(PonyItems.HAY_BURGUER);
             event.accept(PonyItems.CARAMEL_APPLE);
-            event.accept(PonyItems.SOUR_APPLE);
-            event.accept(PonyItems.GREEN_APPLE);
             event.accept(PonyItems.ZAP_APPLE);
         }
         if (event.getTabKey()== CreativeModeTabs.NATURAL_BLOCKS) {
             event.accept(PonyBlocks.GOLDEN_LEAVES.asItem());
             event.accept(PonyBlocks.GOLDEN_LOG.asItem());
             event.accept(PonyBlocks.GOLDEN_SAPLING.asItem());
+            event.accept(PonyBlocks.ZAP_LEAVES.asItem());
+            event.accept(PonyBlocks.ZAP_LOG.asItem());
+            event.accept(PonyBlocks.ZAP_SAPLING.asItem());
+            event.accept(PonyBlocks.APPLE_LEAVES.asItem());
+            event.accept(PonyBlocks.APPLE_SAPLING.asItem());
         }
         if (event.getTabKey()== CreativeModeTabs.BUILDING_BLOCKS) {
             event.accept(PonyBlocks.GOLDEN_LOG.asItem());

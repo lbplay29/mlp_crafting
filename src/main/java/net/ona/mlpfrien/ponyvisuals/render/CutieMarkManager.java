@@ -27,7 +27,7 @@ public class CutieMarkManager {
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 if (image.getPixelRGBA(x, y) == marker) {
-                    image.setPixelRGBA(x, y, newColor(mark,progressX,progressY,player.getData(PonyAttachments.APPEARANCE_DATA).coatColor()));
+                    image.setPixelRGBA(x, y, newColor(mark,progressX,progressY,player.getData(PonyAttachments.APPEARANCE_DATA).colors().getFirst()));
                     if (progressX>=3) {
                         progressX = 0;
                         if (progressY>=3) {
@@ -39,7 +39,7 @@ public class CutieMarkManager {
                         progressX++;
                     }
                 } else if (image.getPixelRGBA(x, y) == markerM) {
-                    image.setPixelRGBA(x, y, newColor(mark,progressMX,progressMY,player.getData(PonyAttachments.APPEARANCE_DATA).coatColor()));
+                    image.setPixelRGBA(x, y, newColor(mark,progressMX,progressMY,player.getData(PonyAttachments.APPEARANCE_DATA).colors().getFirst()));
                     if (progressMX<=0) {
                         progressMX = 3;
                         if (progressMY>=3) {

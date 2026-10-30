@@ -3,6 +3,7 @@ package net.ona.mlpfrien.ponyvisuals.models;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.animation.KeyframeAnimations;
 import net.minecraft.client.model.HierarchicalModel;
@@ -465,7 +466,7 @@ public class PonyModel<T extends AbstractClientPlayer> extends HierarchicalModel
 	}
 
 	private void hornLogic(AbstractClientPlayer player) {
-		HornOverlay.visible=!player.getMainHandItem().isEmpty() || player.getData(PonyAttachments.UNICORN_DATA).isCasting();
+		HornOverlay.visible=!player.getMainHandItem().isEmpty() || player.getData(PonyAttachments.UNICORN_DATA).isCasting() || Minecraft.getInstance().screen!=null;
 	}
 
 	private void applyMovementLean(AbstractClientPlayer entity) {
