@@ -27,6 +27,7 @@ import net.minecraft.world.scores.ReadOnlyScoreInfo;
 import net.minecraft.world.scores.Scoreboard;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.ona.mlpfrien.ponyvisuals.HornAuraLayer;
 import net.ona.mlpfrien.ponyvisuals.models.PonyModel;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +38,7 @@ public class PonyRenderer extends LivingEntityRenderer<AbstractClientPlayer, Pon
     public PonyRenderer(EntityRendererProvider.Context context, float shadowRadius) {
         super(context, new PonyModel<>(context.bakeLayer(PonyModel.LAYER_LOCATION)), shadowRadius);
         this.addLayer(new PonyItemInHand<>(this,context.getItemInHandRenderer()));
+        this.addLayer(new HornAuraLayer<>(this));
     }
     public void render(AbstractClientPlayer entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         if (net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new RenderPonyEvent.Pre(entity, this, partialTicks, poseStack, buffer, packedLight)).isCanceled()) return;

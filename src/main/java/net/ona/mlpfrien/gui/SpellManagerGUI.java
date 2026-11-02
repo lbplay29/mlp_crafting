@@ -122,6 +122,8 @@ public class SpellManagerGUI extends Screen {
         createButton = new TextImageButton(this.width/2-50, this.height/2-100, 56, 29,CONFIRM_SPRITES,
                 button -> createSpell(),Component.literal("Create"),this.font);
         addRenderableWidget(createButton);
+        this.addRenderableWidget(new TextImageButton(this.width / 2 -145, this.height / 2 + 100, 56, 29, CONFIRM_SPRITES, button -> {
+            Minecraft.getInstance().setScreen(new PonyInfoGUI());}, Component.literal("Back"), this.font));
     }
 
     public void assignSpell(int spellIndex) {

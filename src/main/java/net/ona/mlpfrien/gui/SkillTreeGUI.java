@@ -17,6 +17,7 @@ import net.ona.mlpfrien.data.skill.SkillManager;
 import net.ona.mlpfrien.data.skill.SkillNodes;
 import net.ona.mlpfrien.data.skill.SkillTrees;
 import net.ona.mlpfrien.network.UnlockSkillPayload;
+import net.ona.mlpfrien.util.TextImageButton;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +32,8 @@ public class SkillTreeGUI extends Screen {
     private Collection<PonySkills.PonySkill> skills;
     private final WidgetSprites TEXT_OPTIONS = new WidgetSprites(id("textbox_letter_gui"),id("textbox_letter_gui03"),id("textbox_letter_gui02"),
             id("textbox_letter_gui03"));
+    private static final WidgetSprites CONFIRM_SPRITES = new WidgetSprites(id("textbox_confirm_gui"),id("textbox_confirm_gui03"),id("textbox_confirm_gui02"),
+            id("textbox_confirm_gui03"));
     public enum SkillNodeState {
         UNLOCKED,
         AVAILABLE,
@@ -55,6 +58,8 @@ public class SkillTreeGUI extends Screen {
         if (!availableTrees.isEmpty()) {
             tree = availableTrees.getFirst();
         }
+        this.addRenderableWidget(new TextImageButton(this.width / 2 -145, this.height / 2 + 100, 56, 29, CONFIRM_SPRITES, button -> {
+            Minecraft.getInstance().setScreen(new PonyInfoGUI());}, Component.literal("Back"), this.font));
         treeOriginX = width / 2;
         treeOriginY = 50;
     }

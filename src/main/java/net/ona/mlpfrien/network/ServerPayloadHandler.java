@@ -3,6 +3,7 @@ package net.ona.mlpfrien.network;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.data.*;
@@ -26,6 +27,7 @@ public class ServerPayloadHandler {
         if (!(context.player() instanceof ServerPlayer player)) {return;}
         AppearanceData newData = payload.data();
         player.setData(PonyAttachments.APPEARANCE_DATA, newData);
+        player.refreshDimensions();
     }
 
     public static void handlePegasusFlight(PegasusFlightPayload payload, IPayloadContext context) {
@@ -83,10 +85,6 @@ public class ServerPayloadHandler {
         UnicornSpell oldSpell = spells.get(payload.spellIndex());
         spells.set(payload.spellIndex(), payload.spell());
 
-        /*
-         * If that spell was equipped, replace the equipped
-         * version too.
-         */
         List<Optional<UnicornSpell>> equipped = new ArrayList<>(data.equippedSpells());
 
         for (int i = 0; i < equipped.size(); i++) {
@@ -94,7 +92,6 @@ public class ServerPayloadHandler {
                 equipped.set(i, Optional.of(payload.spell()));
             }
         }
-
         player.setData(PonyAttachments.UNICORN_DATA,
                 new UnicornData(List.copyOf(spells), List.copyOf(equipped), data.spellSlots(), data.mana(), data.max_mana(), data.level(), data.isCasting()));
     }
@@ -136,8 +133,6 @@ public class ServerPayloadHandler {
         List<Optional<UnicornSpell>> equipped = new ArrayList<>(data.equippedSpells());
         equipped.set(payload.slot(), Optional.of(spell));
 
-        MyLittlePonyCraftingFriends.LOGGER.info("SERVER EQUIP: slot=" + payload.slot() + " spell=" + payload.spellIndex());
-
         player.setData(PonyAttachments.UNICORN_DATA, new UnicornData(data.spells(), List.copyOf(equipped), data.spellSlots(), data.mana(), data.max_mana(), data.level(), data.isCasting()));
     }
 
@@ -168,12 +163,13 @@ public class ServerPayloadHandler {
             if (!active.remove(PonySkills.REPLACING.id())) {
                 active.add(PonySkills.REPLACING.id());
             }
+            player.displayClientMessage(Component.literal("Toggled block replacing"),true);
         } else if(SkillManager.hasSkill(player, PonySkills.HIGH_VISION.id())) {
             if (!active.remove(PonySkills.HIGH_VISION.id())) {
                 active.add(PonySkills.HIGH_VISION.id());
             }
+            player.displayClientMessage(Component.literal("Toggled night vision"),true);
         } else {return;}
-        player.displayClientMessage(Component.literal("Toggled skill"),true);
 
         player.setData(PonyAttachments.SKILL_STATE_DATA, new SkillStateData(Set.copyOf(active)));
     }

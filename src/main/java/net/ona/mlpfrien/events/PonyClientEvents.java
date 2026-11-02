@@ -82,7 +82,7 @@ public class PonyClientEvents {
         if (player==null) {return;}
         if (PonyClientEvents.CREATOR_MENU.consumeClick()) {
             if (player.getData(PonyAttachments.PONY_DATA).cutieMark()== PonyData.CUTIE_MARKS.ERROR) {
-                Minecraft.getInstance().setScreen(new PonyCreatorGUI());
+                Minecraft.getInstance().setScreen(new PonyCreatorGUI(false));
             } else {
                 Minecraft.getInstance().setScreen(new PonyInfoGUI());
             }
@@ -111,7 +111,6 @@ public class PonyClientEvents {
         if (cooldown>0) {
             cooldown--;
         }
-
     }
 
     @SubscribeEvent

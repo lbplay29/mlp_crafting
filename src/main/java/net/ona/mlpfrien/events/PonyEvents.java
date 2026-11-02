@@ -16,6 +16,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -31,6 +32,7 @@ import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.EntityEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
@@ -40,6 +42,7 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.block.CropGrowEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.data.*;
 import net.ona.mlpfrien.data.skill.PonySkills;
@@ -49,6 +52,7 @@ import net.ona.mlpfrien.data.skill.SkillTrees;
 import net.ona.mlpfrien.init.PonyTriggers;
 import net.ona.mlpfrien.magic.DelayedSpellManager;
 import net.ona.mlpfrien.magic.SpellCaster;
+import net.ona.mlpfrien.network.ChangeScreenPayload;
 import net.ona.mlpfrien.util.PonyAttributeManager;
 import net.ona.mlpfrien.util.ReplacingPlaceContext;
 
@@ -94,13 +98,22 @@ public class PonyEvents {
 
     @SubscribeEvent
     public static void registerCommands(RegisterCommandsEvent event) {
-        event.getDispatcher().register(Commands.literal("mlp").then(Commands.literal("data").then(Commands.literal("reset").executes(context -> {
+        event.getDispatcher().register(Commands.literal("mlp").then(Commands.literal("data")
+                .then(Commands.literal("reset").executes(context -> {
                                     ServerPlayer player = context.getSource().getPlayerOrException();
                                     player.setData(PonyAttachments.PONY_DATA, PonyData.defaultData());
                                     player.setData(PonyAttachments.UNICORN_DATA, UnicornData.defaultData());
                                     player.setData(PonyAttachments.APPEARANCE_DATA, AppearanceData.defaultData());
                                     player.setData(PonyAttachments.LEVEL_DATA, LevelData.defaultData());
                                     return 1;}))));
+        event.getDispatcher().register(Commands.literal("mlp").then(Commands.literal("editor").executes(context -> {
+            PacketDistributor.sendToPlayer(context.getSource().getPlayerOrException(), new ChangeScreenPayload(ChangeScreenPayload.ScreenType.creator_simple));
+                    return 1;})));
+        event.getDispatcher().register(Commands.literal("mlp").then(Commands.literal("editor")
+                .then(Commands.literal("full").executes(context -> {
+                    PacketDistributor.sendToPlayer(context.getSource().getPlayerOrException(), new ChangeScreenPayload(ChangeScreenPayload.ScreenType.creator));
+                    return 1;}))));
+
     }
 
     @SubscribeEvent
@@ -242,6 +255,7 @@ public class PonyEvents {
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) {return;}
         PonyAttributeManager.applyModifiers(player.getData(PonyAttachments.PONY_DATA),player);
+        player.refreshDimensions();
     }
 
     @SubscribeEvent
@@ -270,6 +284,22 @@ public class PonyEvents {
         }
         return state.is(BlockTags.MINEABLE_WITH_PICKAXE) || state.is(BlockTags.MINEABLE_WITH_AXE) || state.is(BlockTags.MINEABLE_WITH_SHOVEL)
                 || state.is(BlockTags.MINEABLE_WITH_HOE);
+    }
+
+    @SubscribeEvent
+    public static void onEntitySize(EntityEvent.Size event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (!player.isAddedToLevel()) return;
+
+        AppearanceData appearanceData = player.getData(PonyAttachments.APPEARANCE_DATA);
+
+        EntityDimensions original = event.getNewSize();
+
+        float width = original.width();
+        float height = original.height() * appearanceData.height()-0.25f;
+        float eyeHeight = original.eyeHeight() * appearanceData.height()-0.25f;
+
+        event.setNewSize(new EntityDimensions(width, height, eyeHeight, original.attachments(), true));
     }
 
     @SubscribeEvent

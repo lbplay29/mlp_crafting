@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.data.AppearanceData;
@@ -31,6 +32,7 @@ public class PonyTextureManager {
         PonyTexture cached = TEXTURES.get(player.getUUID());
 
         if (cached == null||!currentData.equals(cached.lastData)||!currentAppData.equals(cached.lastAppData)) {
+            player.refreshDimensions();
             return createTexture(player);
         }
         return cached.location;
@@ -42,17 +44,13 @@ public class PonyTextureManager {
         PonyData dataP = player.getData(PonyAttachments.PONY_DATA);
         try {
             NativeImage image = loadBaseTexture();
+            image = applyEyesTexture(image,player);
 
-            CutieMarkManager.applyCutieMarkTexture(image,player);
             applyCoatColor(image, data.colors().get(0));
             applyManeColor(image, data.colors().get(1));
             applyEyeColor(image, data.colors().get(2));
-            try {
-                applyMagicColor(image, data.colors().get(3));
-            } catch (IndexOutOfBoundsException e) {
-                PacketDistributor.sendToServer(new AppearanceDataPayload(AppearanceData.defaultData()));
-            }
-
+            applyMagicColor(image, data.colors().get(3));
+            CutieMarkManager.applyCutieMarkTexture(image,player);
 
             DynamicTexture texture = new DynamicTexture(image);
             ResourceLocation location = ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID, "dynamic/pony/" + player.getUUID());
@@ -91,13 +89,13 @@ public class PonyTextureManager {
     }
 
     private static void applyMagicColor(NativeImage image, int magicRgb) {
-        int marker = rgbToAbgr(0xFF00DD);
+        int marker = rgbToAbgr(0xFF00dc);
 
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 if ((image.getPixelRGBA(x, y)& 0x00FFFFFF) == (marker& 0x00FFFFFF)) {
                     int alpha = (image.getPixelRGBA(x, y) >>> 24) & 0xFF;
-                    image.setPixelRGBA(x, y, (alpha << 24) | (magicRgb & 0x00FFFFFF));
+                    image.setPixelRGBA(x, y, argbToAbgr((alpha << 24) | (magicRgb & 0x00FFFFFF)));
                 }
             }
         }
@@ -105,9 +103,11 @@ public class PonyTextureManager {
 
     private static void applyManeColor(NativeImage image, int maneRgb) {
         int marker = rgbToAbgr(0x0000FF);
-        int markerDark = rgbToAbgr(0x0000c8);
+        int markerDark = rgbToAbgr(0x0000df);
+        int markerDarker = rgbToAbgr(0x0000c8);
         int replacement = rgbToAbgr(maneRgb);
-        int replacementDark = rgbToAbgr(darkenColor(maneRgb,40));
+        int replacementDark = rgbToAbgr(darkenColor(maneRgb,20));
+        int replacementDarker = rgbToAbgr(darkenColor(maneRgb,40));
 
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
@@ -115,6 +115,8 @@ public class PonyTextureManager {
                     image.setPixelRGBA(x, y, replacement);
                 } else if (image.getPixelRGBA(x, y) == markerDark) {
                     image.setPixelRGBA(x, y, replacementDark);
+                } else if (image.getPixelRGBA(x, y) == markerDarker) {
+                    image.setPixelRGBA(x, y, replacementDarker);
                 }
             }
         }
@@ -122,10 +124,12 @@ public class PonyTextureManager {
 
 
     private static void applyCoatColor(NativeImage image, int coatRgb) {
+        int markerLighter = rgbToAbgr(0xFF5050);
         int markerLight = rgbToAbgr(0xFF0000);
         int marker = rgbToAbgr(0xd80000);
         int markerDark = rgbToAbgr(0xc80000);
         int markerDarker = rgbToAbgr(0xc00000);
+        int replacementLighter = rgbToAbgr(darkenColor(coatRgb,-15));
         int replacementLight = rgbToAbgr(coatRgb);
         int replacement = rgbToAbgr(darkenColor(coatRgb,30));
         int replacementDark = rgbToAbgr(darkenColor(coatRgb,60));
@@ -141,6 +145,8 @@ public class PonyTextureManager {
                     image.setPixelRGBA(x, y, replacementDarker);
                 } else if (image.getPixelRGBA(x, y) == markerLight) {
                     image.setPixelRGBA(x, y, replacementLight);
+                } else if (image.getPixelRGBA(x, y) == markerLighter) {
+                    image.setPixelRGBA(x, y, replacementLighter);
                 }
             }
         }
@@ -153,9 +159,18 @@ public class PonyTextureManager {
 
         r = Math.clamp(r - darkening, 0, 255);
         g = Math.clamp(g - darkening, 0, 255);
-        b = Math.clamp(b - darkening+5, 0, 255);
+        b = Math.clamp(b - darkening, 0, 255);
 
         return (r << 16) | (g << 8) | b;
+    }
+
+    public static int argbToAbgr(int rgb) {
+        int a = (rgb >> 24) & 0xFF;
+        int r = (rgb >> 16) & 0xFF;
+        int g = (rgb >> 8) & 0xFF;
+        int b = rgb & 0xFF;
+
+        return (a << 24) | (b << 16) | (g << 8) | r;
     }
 
     public static int rgbToAbgr(int rgb) {
@@ -164,6 +179,45 @@ public class PonyTextureManager {
         int b = rgb & 0xFF;
 
         return 0xFF000000 | (b << 16) | (g << 8) | r;
+    }
+
+    public static NativeImage applyEyesTexture(NativeImage image, Player player) throws IOException {
+        int marker = PonyTextureManager.rgbToAbgr(0xFFFF00);
+        NativeImage mark = loadEyesTexture(player.getData(PonyAttachments.APPEARANCE_DATA).eye());
+        int progressX=0;
+        int progressY=0;
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                if (image.getPixelRGBA(x, y) == marker) {
+                    image.setPixelRGBA(x, y, newColor(mark,progressX,progressY,player.getData(PonyAttachments.APPEARANCE_DATA).colors().getFirst()));
+                    if (progressX>=11) {
+                        progressX = 0;
+                        if (progressY>=4) {
+                            progressY=0;
+                        } else {
+                            progressY++;
+                        }
+                    } else {
+                        progressX++;
+                    }
+                }
+            }
+        }
+        return image;
+    }
+    private static int newColor(NativeImage image, int x, int y, int coatColor) {
+        int alpha = (image.getPixelRGBA(x,y) >>> 24) & 0xFF;
+        if (alpha==0) {
+            return PonyTextureManager.rgbToAbgr(coatColor);
+        }
+        return image.getPixelRGBA(x,y);
+    }
+    private static NativeImage loadEyesTexture(int index) throws IOException {
+        try (InputStream stream = Minecraft.getInstance().getResourceManager().open(ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID,
+                "textures/entity/eyes/eyes"+index+".png"))) {
+            return NativeImage.read(stream);
+        }
     }
 
     private record PonyTexture(ResourceLocation location, DynamicTexture texture, PonyData lastData, AppearanceData lastAppData) {}

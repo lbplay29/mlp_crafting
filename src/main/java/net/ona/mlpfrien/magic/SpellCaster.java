@@ -10,6 +10,7 @@ import java.util.List;
 
 public class SpellCaster {
     public static void castSpell(ServerPlayer caster, UnicornSpell spell) {
+        if (caster.getData(PonyAttachments.UNICORN_DATA).isCasting()) return;
         SpellContext context = new SpellContext(caster);
         useMana(caster,spell.cost());
         List<SpellComponent> components = spell.componentList();

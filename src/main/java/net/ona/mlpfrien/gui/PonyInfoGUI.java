@@ -59,9 +59,9 @@ public class PonyInfoGUI extends Screen {
 
 
         guiGraphics.blit(id("textures/gui/cutie_mark_gui.png"),this.width/2-100,this.height/2-46,0,0,90,89,90,89);
-        int x = centerX -50 - 90 / 2;
-        int y = centerY -46 - 89 / 2;
-        boolean hovered = mouseX >= x && mouseX < x + 90 && mouseY >= y && mouseY < y + 89;
+        int x = centerX -46 - 90 / 2;
+        int y = centerY +10  - 89 / 2;
+        boolean hovered = mouseX >= x && mouseX < x + 64 && mouseY >= y && mouseY < y + 64;
         if (data.discoveredCM()) {
             switch (data.cutieMark()) {
                 case BLANK -> guiGraphics.blit(id("textures/gui/cm_blank.png"),this.width/2-87,this.height/2-34,

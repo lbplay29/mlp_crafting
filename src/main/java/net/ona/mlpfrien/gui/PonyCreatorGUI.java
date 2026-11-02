@@ -20,17 +20,20 @@ import net.ona.mlpfrien.network.AppearanceDataPayload;
 import net.ona.mlpfrien.network.PonyDataPayload;
 import net.ona.mlpfrien.ponyvisuals.render.CutieMarkManager;
 import net.ona.mlpfrien.ponyvisuals.render.PonyTextureManager;
+import net.ona.mlpfrien.util.PonySlider;
 import net.ona.mlpfrien.util.TextImageButton;
 import net.ona.mlpfrien.util.BasicUtilities;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 import static net.ona.mlpfrien.util.BasicUtilities.id;
 
 public class PonyCreatorGUI extends Screen {
-    public PonyCreatorGUI() {
-        super(Component.literal("Pony Info"));
+    public PonyCreatorGUI(boolean superficial) {
+        super(Component.literal("Pony Creation"));
+        this.isSuperficial = superficial;
     }
     private enum PAGES {
         RACE,
@@ -41,20 +44,24 @@ public class PonyCreatorGUI extends Screen {
         body,
         mane,
         eye,
-        magic
+        other
     }
     private PonyData ponyData;
     private AppearanceData appearanceData;
     private Player player;
     private PonyData.RACES selectedRace;
-    private TextImageButton magicColoring;
     private ColorPickerWidget coatPicker;
     private ColorPickerWidget manePicker;
     private ColorPickerWidget eyePicker;
     private ColorPickerWidget magicPicker;
+    private List<ColorPickerWidget> pickers = new ArrayList<>();
     private PAGES thisPage;
     private TextImageButton maneStyleButton;
+    private TextImageButton eyesButton;
     private TextImageButton lastConfirm;
+    private PonySlider heightSlider;
+    private PonySlider wingSizeSlider;
+    private final boolean isSuperficial;
 
     @Override
     protected void init() {
@@ -66,7 +73,7 @@ public class PonyCreatorGUI extends Screen {
         appearanceData = player.getData(PonyAttachments.APPEARANCE_DATA);
         selectedRace = ponyData.race();
 
-        choosePage(PAGES.RACE);
+        choosePage(isSuperficial ? PAGES.CREATOR : PAGES.RACE);
     }
     private static final WidgetSprites LETTER_SPRITES = new WidgetSprites(id("textbox_letter_gui"),id("textbox_letter_gui03"),id("textbox_letter_gui02"),
             id("textbox_letter_gui03"));
@@ -89,7 +96,7 @@ public class PonyCreatorGUI extends Screen {
     private void buildPageOne() {
         clearWidgets();
 
-        this.addRenderableWidget(new TextImageButton(this.width / 2 +70, this.height / 2 + 80, 56, 29, CONFIRM_SPRITES, button -> {
+        this.addRenderableWidget(new TextImageButton(this.width / 2 +145, this.height / 2 + 100, 56, 29, CONFIRM_SPRITES, button -> {
             choosePage(PAGES.CREATOR);}, Component.literal("Confirm"), this.font));
         this.addRenderableWidget(new TextImageButton(this.width / 2 -175, this.height / 2 - 10, 86, 29, OPTION_SPRITES, button ->{
             selectedRace= PonyData.RACES.PEGASUS;
@@ -104,18 +111,29 @@ public class PonyCreatorGUI extends Screen {
 
     private void buildPageTwo() {
         clearWidgets();
-        this.addRenderableWidget(new TextImageButton(this.width / 2 -160, this.height / 2 + 40, 86, 29, OPTION_SPRITES, button ->{
+        this.addRenderableWidget(new TextImageButton(this.width / 2 -160, this.height / 2 - 80, 86, 29, OPTION_SPRITES, button ->{
             updateTab(TABS.body);}, Component.literal("Body"), this.font));
-        this.addRenderableWidget(new TextImageButton(this.width / 2 -160, this.height / 2 , 86, 29, OPTION_SPRITES, button ->{
-            updateTab(TABS.mane);}, Component.literal("Mane"), this.font));
         this.addRenderableWidget(new TextImageButton(this.width / 2 -160, this.height / 2 - 40, 86, 29, OPTION_SPRITES, button ->{
-            updateTab(TABS.eye);}, Component.literal("Eyes"), this.font));
-        magicColoring = new TextImageButton(this.width / 2 -160, this.height / 2 - 80, 86, 29, OPTION_SPRITES, button ->{
-            updateTab(TABS.magic);}, Component.literal("Magic"), this.font);
+            updateTab(TABS.mane);}, Component.literal("Mane"), this.font));
+        this.addRenderableWidget(new TextImageButton(this.width / 2 -160, this.height / 2 , 86, 29, OPTION_SPRITES, button ->{
+            updateTab(TABS.eye);}, Component.literal("Face"), this.font));
+        this.addRenderableWidget(new TextImageButton(this.width / 2 -160, this.height / 2 + 40, 86, 29, OPTION_SPRITES, button ->{
+            updateTab(TABS.other);}, Component.literal("Other"), this.font));
         maneStyleButton = new TextImageButton(this.width / 2 +60, this.height / 2 +100, 86, 29, OPTION_SPRITES, button ->{
             updateTextureA(player, withManeStyle(BasicUtilities
-                    .loopingInt(5,appearanceData.maneStyle()),appearanceData));}, Component.literal("Mane Style: "+appearanceData.maneStyle()), this.font);
+                    .loopingInt(6,appearanceData.maneStyle()),appearanceData));}, Component.literal("Mane Style: "+appearanceData.maneStyle()), this.font);
+        eyesButton = new TextImageButton(this.width / 2 +60, this.height / 2 +100, 86, 29, OPTION_SPRITES, button ->{
+            updateTextureA(player, withEyes(BasicUtilities
+                    .loopingInt(9,appearanceData.eye()),appearanceData));}, Component.literal("Eyes: "+appearanceData.eye()), this.font);
         this.addRenderableWidget(maneStyleButton);
+        this.addRenderableWidget(eyesButton);
+
+        heightSlider = new PonySlider(this.width / 2 -60, this.height / 2 - 100,100,20,Component.literal("Height"),
+                0.75f,1.25f,1, value -> {updateTextureA(player,withHeight(value,appearanceData));});
+        this.addRenderableWidget(heightSlider);
+        wingSizeSlider = new PonySlider(this.width / 2 -60, this.height / 2 - 100,100,20,Component.literal("Wing Size"),
+                0.75f,1.25f,1, value -> {updateTextureA(player,withWingSize(value,appearanceData));});
+        this.addRenderableWidget(wingSizeSlider);
 
         coatPicker = new ColorPickerWidget(this.width / 2 + 62, this.height / 2-46, 120, 70, appearanceData.colors().get(0),
                 newColor -> {updateTextureA(player, withColor(newColor,0,appearanceData));});
@@ -126,22 +144,32 @@ public class PonyCreatorGUI extends Screen {
         magicPicker = new ColorPickerWidget(this.width / 2 + 62, this.height / 2-46, 120, 70, appearanceData.colors().get(3),
                 newColor -> {updateTextureA(player, withColor(newColor,3,appearanceData));});
         updateTab(TABS.body);
+        pickers = List.of(magicPicker,manePicker,eyePicker,coatPicker);
 
         this.addRenderableWidget(manePicker);
         this.addRenderableWidget(coatPicker);
         this.addRenderableWidget(eyePicker);
         this.addRenderableWidget(magicPicker);
-        this.addRenderableWidget(magicColoring);
-        this.addRenderableWidget(new TextImageButton(this.width / 2 +175, this.height / 2 + 100, 56, 29, CONFIRM_SPRITES, button -> {
-            choosePage(PAGES.MARK);}, Component.literal("Confirm"), this.font));
+        this.addRenderableWidget(new TextImageButton(this.width / 2 +145, this.height / 2 + 100, 56, 29, CONFIRM_SPRITES, button -> {
+            if (isSuperficial) {
+                this.onClose();
+            } else {
+                choosePage(PAGES.MARK);
+            }}, Component.literal("Confirm"), this.font));
+        if (!isSuperficial) {
+            this.addRenderableWidget(new TextImageButton(this.width / 2 -145, this.height / 2 + 100, 56, 29, CONFIRM_SPRITES, button -> {
+                choosePage(PAGES.RACE);}, Component.literal("Back"), this.font));
+        }
     }
 
     private void buildPageThree() {
         clearWidgets();
 
-        lastConfirm = new TextImageButton(this.width / 2 +70, this.height / 2 + 80, 56, 29, CONFIRM_SPRITES, button -> {
+        lastConfirm = new TextImageButton(this.width / 2 +145, this.height / 2 + 100, 56, 29, CONFIRM_SPRITES, button -> {
             CutieMarkManager.discoverCutieMarkServer(player, false);
             this.onClose();}, Component.literal("Confirm"), this.font);
+        this.addRenderableWidget(new TextImageButton(this.width / 2 -145, this.height / 2 + 100, 56, 29, CONFIRM_SPRITES, button -> {
+            choosePage(PAGES.CREATOR);}, Component.literal("Back"), this.font));
         this.addRenderableWidget(lastConfirm);
         this.addRenderableWidget(new TextImageButton(this.width / 2 -175, this.height / 2 - 10, 86, 29, OPTION_SPRITES, button ->{
             CutieMarkManager.changeCutieMark(player, PonyData.CUTIE_MARKS.MINING);}, Component.literal("Mining"), this.font));
@@ -162,12 +190,20 @@ public class PonyCreatorGUI extends Screen {
     private void updateTab(TABS newTab) {
         coatPicker.visible = newTab==TABS.body;
         coatPicker.active = newTab==TABS.body;
+        heightSlider.visible = newTab==TABS.body;
+        heightSlider.active = newTab==TABS.body;
         manePicker.visible = newTab==TABS.mane;
         manePicker.active = newTab==TABS.mane;
+        maneStyleButton.visible = newTab==TABS.mane;
+        maneStyleButton.active = newTab==TABS.mane;
         eyePicker.visible = newTab==TABS.eye;
         eyePicker.active = newTab==TABS.eye;
-        magicPicker.visible = newTab==TABS.magic;
-        magicPicker.active = newTab==TABS.magic;
+        eyesButton.visible = newTab==TABS.eye;
+        eyesButton.active = newTab==TABS.eye;
+        magicPicker.visible = newTab==TABS.other && ponyData.race().canUseMagic();
+        magicPicker.active = newTab==TABS.other && ponyData.race().canUseMagic();
+        wingSizeSlider.visible = newTab==TABS.other && ponyData.race().canFly();
+        wingSizeSlider.active = newTab==TABS.other && ponyData.race().canFly();
     }
 
     @Override
@@ -199,8 +235,6 @@ public class PonyCreatorGUI extends Screen {
                     guiGraphics.drawString(this.font, line, this.width/2+75, textY, 0xFFFFFF,true);
                     textY += this.font.lineHeight;
                 }
-                magicColoring.visible=ponyData.race().canUseMagic();
-                magicColoring.active=ponyData.race().canUseMagic();
             }
         }
 
@@ -218,7 +252,14 @@ public class PonyCreatorGUI extends Screen {
 
         switch (thisPage) {
             case CREATOR -> {
-                guiGraphics.blit(ColorBoxSprite,this.width / 2 + 53, this.height / 2-54,0,0,138,101,138,101);
+                if (!pickers.isEmpty()) {
+                    for (ColorPickerWidget picker : pickers) {
+                        if (picker.visible) {
+                            guiGraphics.blit(ColorBoxSprite,this.width / 2 + 53, this.height / 2-54,0,0,
+                                    138,101,138,101);
+                        }
+                    }
+                }
             }
         }
     }
@@ -228,6 +269,11 @@ public class PonyCreatorGUI extends Screen {
             removeWidget(maneStyleButton);
             maneStyleButton.setMessage(Component.literal("Mane Style: "+data.maneStyle()));
             addRenderableWidget(maneStyleButton);
+        }
+        if (!(eyesButton ==null)) {
+            removeWidget(eyesButton);
+            eyesButton.setMessage(Component.literal("Eyes: "+data.eye()));
+            addRenderableWidget(eyesButton);
         }
     }
 
@@ -245,11 +291,21 @@ public class PonyCreatorGUI extends Screen {
         return new PonyData(newRace, curData.cutieMark(),curData.discoveredCM());
     }
     public AppearanceData withManeStyle(int newStyle, AppearanceData curData) {
-        return new AppearanceData(newStyle, curData.colors());
+        return new AppearanceData(newStyle, curData.colors(), curData.wing_size(),curData.height(),curData.eye());
     }
     public AppearanceData withColor(int newColor, int index, AppearanceData curData) {
         List<Integer> newColors = curData.colors();
         newColors.set(index,newColor);
-        return new AppearanceData(curData.maneStyle(), newColors);
+        return new AppearanceData(curData.maneStyle(), newColors, curData.wing_size(),curData.height(),curData.eye());
+    }
+    public AppearanceData withHeight(float newHeight, AppearanceData curData) {
+        player.refreshDimensions();
+        return new AppearanceData(curData.maneStyle(), curData.colors(), curData.wing_size(),newHeight,curData.eye());
+    }
+    public AppearanceData withWingSize(float newSize, AppearanceData curData) {
+        return new AppearanceData(curData.maneStyle(), curData.colors(), newSize,curData.height(),curData.eye());
+    }
+    public AppearanceData withEyes(int newEyes, AppearanceData curData) {
+        return new AppearanceData(curData.maneStyle(), curData.colors(), curData.wing_size(),curData.height(),newEyes);
     }
 }
