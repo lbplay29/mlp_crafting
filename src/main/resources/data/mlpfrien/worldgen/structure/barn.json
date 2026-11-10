@@ -1,10 +1,10 @@
 {
   "type": "minecraft:jigsaw",
-  "biomes": "#minecraft:is_forest",
+  "biomes": "mlpfrien:apple_forest",
   "step": "surface_structures",
   "terrain_adaptation": "beard_thin",
   "start_pool": "mlpfrien:barn/start",
-  "size": 0,
+  "size": 1,
   "start_height": {
     "absolute": 0
   },

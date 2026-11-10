@@ -1,7 +1,10 @@
 package net.ona.mlpfrien.block;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.ItemAbility;
@@ -22,8 +25,23 @@ public class PonyLog extends RotatedPillarBlock {
             if (state.getBlock().equals(PonyBlocks.GOLDEN_WOOD.get())) {
                 return PonyBlocks.STRIPPED_GOLDEN_WOOD.get().defaultBlockState().setValue(AXIS,state.getValue(AXIS));
             }
+            if (state.getBlock().equals(PonyBlocks.ZAP_LOG.get())) {
+                return PonyBlocks.STRIPPED_ZAP_LOG.get().defaultBlockState().setValue(AXIS,state.getValue(AXIS));
+            }
+            if (state.getBlock().equals(PonyBlocks.ZAP_WOOD.get())) {
+                return PonyBlocks.STRIPPED_ZAP_WOOD.get().defaultBlockState().setValue(AXIS,state.getValue(AXIS));
+            }
         }
 
         return super.getToolModifiedState(state, context, itemAbility, simulate);
+    }
+
+    @Override
+    public boolean isFlammable(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+        return true;
+    }
+    @Override
+    public int getFlammability(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+        return 20;
     }
 }

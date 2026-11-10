@@ -8,6 +8,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
+import net.ona.mlpfrien.init.PonyBlocks;
 import net.ona.mlpfrien.init.PonyItems;
 import net.ona.mlpfrien.init.PonyTags;
 import org.jetbrains.annotations.NotNull;
@@ -37,5 +38,18 @@ public class LItemTagProvider extends ItemTagsProvider {
                 .add(Items.CARROT_ON_A_STICK)
                 .add(Items.WARPED_FUNGUS_ON_A_STICK)
                 .addTag(ItemTags.AXES);
+        tag(ItemTags.PLANKS)
+                .add(PonyBlocks.ZAP_PLANKS.get().asItem())
+                .add(PonyBlocks.GOLDEN_PLANKS.get().asItem());
+        tag(PonyTags.ZAP_LOGS)
+                .add(PonyBlocks.ZAP_LOG.get().asItem())
+                .add(PonyBlocks.STRIPPED_ZAP_LOG.get().asItem())
+                .add(PonyBlocks.ZAP_WOOD.get().asItem())
+                .add(PonyBlocks.STRIPPED_ZAP_WOOD.get().asItem());
+        tag(PonyTags.GOLDEN_LOGS)
+                .add(PonyBlocks.GOLDEN_LOG.get().asItem())
+                .add(PonyBlocks.STRIPPED_GOLDEN_LOG.get().asItem())
+                .add(PonyBlocks.GOLDEN_WOOD.get().asItem())
+                .add(PonyBlocks.STRIPPED_GOLDEN_WOOD.get().asItem());
     }
 }

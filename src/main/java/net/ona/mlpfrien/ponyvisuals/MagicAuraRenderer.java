@@ -53,7 +53,7 @@ public final class MagicAuraRenderer {
     /** Which entry of AppearanceData.colors() is the aura color. */
     public static final int AURA_COLOR_INDEX = 3;
     /** Set to true to only show the aura for races that can use magic (unicorns). */
-    public static final boolean UNICORNS_ONLY = false;
+    public static final boolean UNICORNS_ONLY = true;
 
     /** Flat items: glow thickness around the item's edges, in texture pixels. */
     private static final int GLOW_RADIUS = 1;

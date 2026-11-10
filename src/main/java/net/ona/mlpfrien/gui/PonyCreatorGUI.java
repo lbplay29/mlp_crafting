@@ -12,7 +12,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.ona.mlpfrien.MyLittlePonyCraftingFriends;
 import net.ona.mlpfrien.data.AppearanceData;
 import net.ona.mlpfrien.data.PonyAttachments;
 import net.ona.mlpfrien.data.PonyData;
@@ -24,7 +23,6 @@ import net.ona.mlpfrien.util.PonySlider;
 import net.ona.mlpfrien.util.TextImageButton;
 import net.ona.mlpfrien.util.BasicUtilities;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +31,7 @@ import static net.ona.mlpfrien.util.BasicUtilities.id;
 public class PonyCreatorGUI extends Screen {
     public PonyCreatorGUI(boolean superficial) {
         super(Component.literal("Pony Creation"));
-        this.isSuperficial = superficial;
+        this.notSuperficial = superficial;
     }
     private enum PAGES {
         RACE,
@@ -61,7 +59,7 @@ public class PonyCreatorGUI extends Screen {
     private TextImageButton lastConfirm;
     private PonySlider heightSlider;
     private PonySlider wingSizeSlider;
-    private final boolean isSuperficial;
+    private final boolean notSuperficial;
 
     @Override
     protected void init() {
@@ -73,7 +71,7 @@ public class PonyCreatorGUI extends Screen {
         appearanceData = player.getData(PonyAttachments.APPEARANCE_DATA);
         selectedRace = ponyData.race();
 
-        choosePage(isSuperficial ? PAGES.CREATOR : PAGES.RACE);
+        choosePage(notSuperficial ? PAGES.CREATOR : PAGES.RACE);
     }
     private static final WidgetSprites LETTER_SPRITES = new WidgetSprites(id("textbox_letter_gui"),id("textbox_letter_gui03"),id("textbox_letter_gui02"),
             id("textbox_letter_gui03"));
@@ -95,7 +93,7 @@ public class PonyCreatorGUI extends Screen {
 
     @Override
     public void onClose() {
-        if (!isSuperficial) super.onClose();
+        if (notSuperficial) super.onClose();
     }
 
     private void buildPageOne() {
@@ -156,12 +154,12 @@ public class PonyCreatorGUI extends Screen {
         this.addRenderableWidget(eyePicker);
         this.addRenderableWidget(magicPicker);
         this.addRenderableWidget(new TextImageButton(this.width / 2 +145, this.height / 2 + 100, 56, 29, CONFIRM_SPRITES, button -> {
-            if (isSuperficial) {
-                this.onClose();
+            if (notSuperficial) {
+                super.onClose();
             } else {
                 choosePage(PAGES.MARK);
             }}, Component.literal("Confirm"), this.font));
-        if (!isSuperficial) {
+        if (!notSuperficial) {
             this.addRenderableWidget(new TextImageButton(this.width / 2 -145, this.height / 2 + 100, 56, 29, CONFIRM_SPRITES, button -> {
                 choosePage(PAGES.RACE);}, Component.literal("Back"), this.font));
         }
@@ -172,7 +170,7 @@ public class PonyCreatorGUI extends Screen {
 
         lastConfirm = new TextImageButton(this.width / 2 +145, this.height / 2 + 100, 56, 29, CONFIRM_SPRITES, button -> {
             CutieMarkManager.discoverCutieMarkServer(player, false);
-            this.onClose();}, Component.literal("Confirm"), this.font);
+            super.onClose();}, Component.literal("Confirm"), this.font);
         this.addRenderableWidget(new TextImageButton(this.width / 2 -145, this.height / 2 + 100, 56, 29, CONFIRM_SPRITES, button -> {
             choosePage(PAGES.CREATOR);}, Component.literal("Back"), this.font));
         this.addRenderableWidget(lastConfirm);

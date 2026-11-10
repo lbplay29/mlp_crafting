@@ -9,6 +9,8 @@ import net.minecraft.world.level.block.Block;
 public class PonyTags {
     public static TagKey<Item> APPLES = createItemTag("apples");
     public static TagKey<Item> HANDHELD = createItemTag("handheld");
+    public static TagKey<Item> ZAP_LOGS = createItemTag("zap_logs");
+    public static TagKey<Item> GOLDEN_LOGS = createItemTag("golden_logs");
 
     private static TagKey<Item> createItemTag(String name) {
         return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("mlpfrien",name));

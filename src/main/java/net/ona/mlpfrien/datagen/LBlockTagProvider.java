@@ -29,7 +29,11 @@ public class LBlockTagProvider extends BlockTagsProvider {
         tag(BlockTags.LOGS)
                 .add(PonyBlocks.GOLDEN_LOG.get())
                 .add(PonyBlocks.ZAP_LOG.get());
+        tag(BlockTags.PLANKS)
+                .add(PonyBlocks.GOLDEN_PLANKS.get())
+                .add(PonyBlocks.ZAP_PLANKS.get());
         tag(BlockTags.SAPLINGS)
+                .add(PonyBlocks.APPLE_SAPLING.get())
                 .add(PonyBlocks.GOLDEN_SAPLING.get())
                 .add(PonyBlocks.ZAP_SAPLING.get());
         tag(BlockTags.FENCES)
