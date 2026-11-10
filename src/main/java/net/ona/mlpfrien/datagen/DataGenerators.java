@@ -26,7 +26,8 @@ public class DataGenerators {
         CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
 
         generator.addProvider(event.includeServer(), new LootTableProvider(output, Collections.emptySet(),
-                List.of(new LootTableProvider.SubProviderEntry(LBlockLootTableProvider::new, LootContextParamSets.BLOCK)), lookup));
+                List.of(new LootTableProvider.SubProviderEntry(LBlockLootTableProvider::new, LootContextParamSets.BLOCK),
+                        new LootTableProvider.SubProviderEntry(LLootTableProvider::new, LootContextParamSets.CHEST)), lookup));
         generator.addProvider(event.includeServer(), new LRecipeProvider(output, lookup));
 
         generator.addProvider(event.includeServer(), new LDataPackProvider(output, lookup));

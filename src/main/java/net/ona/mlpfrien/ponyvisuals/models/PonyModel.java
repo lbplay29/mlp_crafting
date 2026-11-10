@@ -501,7 +501,7 @@ public class PonyModel<T extends AbstractClientPlayer> extends HierarchicalModel
 				animateWalk(PonyAnimation.walk, swing, limbSwingAmount, 2f, 0.5F);
 			} else {
 				if (entity.isSprinting()) {
-//					animateWalk(PonyAnimation.run, swing, limbSwingAmount, 1.8f, 1.0F);
+					animateWalk(PonyAnimation.run, swing, limbSwingAmount, 1.8f, 1.0F);
 //					animateWalk(PonyAnimation.run, swing, limbSwingAmount, 1.8f, 0.25F);
 					animateWalk(PonyAnimation.walk, swing, limbSwingAmount, 2f, 0.5F);
 				}

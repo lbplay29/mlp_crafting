@@ -93,6 +93,11 @@ public class PonyCreatorGUI extends Screen {
         thisPage=curPage;
     }
 
+    @Override
+    public void onClose() {
+        if (!isSuperficial) super.onClose();
+    }
+
     private void buildPageOne() {
         clearWidgets();
 

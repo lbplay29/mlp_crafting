@@ -78,8 +78,7 @@ public class PonyClientEvents {
 
     @SubscribeEvent
     public static void clientTick(ClientTickEvent.Post event) {
-        Player player = Minecraft.getInstance().player;
-        if (player==null) {return;}
+        if (!(Minecraft.getInstance().player instanceof Player player)) return;
         if (PonyClientEvents.CREATOR_MENU.consumeClick()) {
             if (player.getData(PonyAttachments.PONY_DATA).cutieMark()== PonyData.CUTIE_MARKS.ERROR) {
                 Minecraft.getInstance().setScreen(new PonyCreatorGUI(false));
@@ -110,6 +109,10 @@ public class PonyClientEvents {
         }
         if (cooldown>0) {
             cooldown--;
+        }
+
+        if (player.getData(PonyAttachments.PONY_DATA).cutieMark()== PonyData.CUTIE_MARKS.ERROR && !(Minecraft.getInstance().screen instanceof PonyCreatorGUI)) {
+            Minecraft.getInstance().setScreen(new PonyCreatorGUI(false));
         }
     }
 
