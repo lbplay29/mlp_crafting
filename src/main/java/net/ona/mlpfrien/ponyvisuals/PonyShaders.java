@@ -24,8 +24,7 @@ public class PonyShaders {
     public static void registerShaders(RegisterShadersEvent event) throws IOException {
         event.registerShader(
                 new ShaderInstance(event.getResourceProvider(),
-                        ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID, "magic_aura"),
-                        DefaultVertexFormat.NEW_ENTITY),
+                        ResourceLocation.fromNamespaceAndPath(MyLittlePonyCraftingFriends.MODID, "magic_aura"), DefaultVertexFormat.NEW_ENTITY),
                 shader -> magicAura = shader);
     }
 }

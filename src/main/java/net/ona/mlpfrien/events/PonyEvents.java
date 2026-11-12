@@ -1,5 +1,6 @@
 package net.ona.mlpfrien.events;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -79,8 +80,12 @@ public class PonyEvents {
         if (unicornData.mana()<unicornData.max_mana()) {
             SpellCaster.useMana(player,-0.1f);
         }
-        if (SkillManager.hasSkill(player,PonySkills.HIGH_VISION.id()) && skillState.isActive(PonySkills.HIGH_VISION)) {
-            player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION,10,0,false,false));
+        if (SkillManager.hasSkill(player,PonySkills.HIGH_VISION.id())) {
+            if (skillState.isActive(PonySkills.HIGH_VISION)) {
+                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION,300,0,false,false));
+            } else {
+                player.removeEffect(MobEffects.NIGHT_VISION);
+            }
         }
         if (unicornData.isCasting() && castingTime <= 0) {
             castingTime = 20;

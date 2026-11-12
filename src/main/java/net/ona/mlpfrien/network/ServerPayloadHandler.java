@@ -159,17 +159,16 @@ public class ServerPayloadHandler {
 
         SkillStateData data = player.getData(PonyAttachments.SKILL_STATE_DATA);
         Set<ResourceLocation> active = new HashSet<>(data.activeModes());
-        if (SkillManager.hasSkill(player, PonySkills.REPLACING.id())) {
-            if (!active.remove(PonySkills.REPLACING.id())) {
-                active.add(PonySkills.REPLACING.id());
+        for (PonySkills.PonySkill skill : PonySkills.getAll()) {
+            if (SkillManager.hasSkill(player, skill.id())) {
+                if (!active.remove(skill.id())) {
+                    active.add(skill.id());
+                }
+                boolean activated = player.getData(PonyAttachments.SKILL_STATE_DATA).isActive(skill);
+                Component state = Component.literal(activated ? "On" : "Off").withColor(activated ? 0x00FF00 : 0xFF0000);
+                player.displayClientMessage(Component.literal(Component.translatable("skill.mlpfrien." + skill.id().getPath()).getString()+": ").append(state),true);
             }
-            player.displayClientMessage(Component.literal("Toggled block replacing"),true);
-        } else if(SkillManager.hasSkill(player, PonySkills.HIGH_VISION.id())) {
-            if (!active.remove(PonySkills.HIGH_VISION.id())) {
-                active.add(PonySkills.HIGH_VISION.id());
-            }
-            player.displayClientMessage(Component.literal("Toggled night vision"),true);
-        } else {return;}
+        }
 
         player.setData(PonyAttachments.SKILL_STATE_DATA, new SkillStateData(Set.copyOf(active)));
     }

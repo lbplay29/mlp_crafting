@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
@@ -69,33 +70,19 @@ public class LBlockstateProvider extends BlockStateProvider {
         simpleBlock(PonyBlocks.APPLE_SAPLING.get(),models().cross(BuiltInRegistries.BLOCK.getKey(PonyBlocks.APPLE_SAPLING.get()).getPath(),
                 blockTexture(PonyBlocks.APPLE_SAPLING.get())).renderType("cutout"));
 
-        getVariantBuilder(PonyBlocks.ZAP_LEAVES.get())
-                .partialState().with(AppleLeavesBlock.AGE, 0).modelForState()
-                .modelFile(appleVariantTextures(PonyBlocks.ZAP_LEAVES.get()).get(0)).addModel()
-                .partialState().with(AppleLeavesBlock.AGE, 1).modelForState()
-                .modelFile(appleVariantTextures(PonyBlocks.ZAP_LEAVES.get()).get(1)).addModel()
-                .partialState().with(AppleLeavesBlock.AGE, 2).modelForState()
-                .modelFile(appleVariantTextures(PonyBlocks.ZAP_LEAVES.get()).get(2)).addModel()
-                .partialState().with(AppleLeavesBlock.AGE, 3).modelForState()
-                .modelFile(appleVariantTextures(PonyBlocks.ZAP_LEAVES.get()).get(3)).addModel();
-        getVariantBuilder(PonyBlocks.GOLDEN_LEAVES.get())
-                .partialState().with(AppleLeavesBlock.AGE, 0).modelForState()
-                .modelFile(appleVariantTextures(PonyBlocks.GOLDEN_LEAVES.get()).get(0)).addModel()
-                .partialState().with(AppleLeavesBlock.AGE, 1).modelForState()
-                .modelFile(appleVariantTextures(PonyBlocks.GOLDEN_LEAVES.get()).get(1)).addModel()
-                .partialState().with(AppleLeavesBlock.AGE, 2).modelForState()
-                .modelFile(appleVariantTextures(PonyBlocks.GOLDEN_LEAVES.get()).get(2)).addModel()
-                .partialState().with(AppleLeavesBlock.AGE, 3).modelForState()
-                .modelFile(appleVariantTextures(PonyBlocks.GOLDEN_LEAVES.get()).get(3)).addModel();
-        getVariantBuilder(PonyBlocks.APPLE_LEAVES.get())
-                .partialState().with(AppleLeavesBlock.AGE, 0).modelForState()
-                .modelFile(appleVariantTextures(PonyBlocks.APPLE_LEAVES.get()).get(0)).addModel()
-                .partialState().with(AppleLeavesBlock.AGE, 1).modelForState()
-                .modelFile(appleVariantTextures(PonyBlocks.APPLE_LEAVES.get()).get(1)).addModel()
-                .partialState().with(AppleLeavesBlock.AGE, 2).modelForState()
-                .modelFile(appleVariantTextures(PonyBlocks.APPLE_LEAVES.get()).get(2)).addModel()
-                .partialState().with(AppleLeavesBlock.AGE, 3).modelForState()
-                .modelFile(appleVariantTextures(PonyBlocks.APPLE_LEAVES.get()).get(3)).addModel();
+        appleLeavesBlock(PonyBlocks.ZAP_LEAVES.get());
+        appleLeavesBlock(PonyBlocks.GOLDEN_LEAVES.get());
+        appleLeavesBlock(PonyBlocks.APPLE_LEAVES.get());
+    }
+
+    /** Blockstate for an AppleLeavesBlock: one model per AGE. Builds the models only once. */
+    private void appleLeavesBlock(Block block) {
+        List<ModelFile> models = appleVariantTextures(block);
+        VariantBlockStateBuilder builder = getVariantBuilder(block);
+        for (int age = 0; age <= 3; age++) {
+            builder.partialState().with(AppleLeavesBlock.AGE, age).modelForState()
+                    .modelFile(models.get(age)).addModel();
+        }
     }
 
     private List<ModelFile> appleVariantTextures(Block block) {
@@ -124,7 +111,7 @@ public class LBlockstateProvider extends BlockStateProvider {
                 .tintindex(0).cullface(direction)).end();
         if (overlayTexture != null) {
             model.element().from(-0.01F, -0.01F, -0.01F).to(16.01F, 16.01F, 16.01F).allFaces((direction, face) ->
-                    face.texture("#overlay")).end();
+                    face.texture("#overlay").uvs(0, 0, 16, 16)).end(); // explicit UVs: the auto ones would be -0.01..16.01
         }
         return model;
     }
